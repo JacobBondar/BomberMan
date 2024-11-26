@@ -2,22 +2,39 @@
 #include <fstream>
 #include <string>
 #include <Controller.h>
+#include <stdio.h>
 
 int main()
 {
-	auto c = Controller();
-	c.run();
+	//auto c = Controller();
+	//c.run();
+
+	auto list = std::ifstream("Playlist.txt");
+
+	if (!list.is_open())
+	{
+		//-----
+	}
+	
+	auto levelName = std::string();
+	auto rowInGame = std::string();
+	char c;
+	
+	while (getline(list, levelName))
+	{
+		if (list.fail()) break;
+
+		auto level = std::ifstream(levelName);
+		if (!level.is_open())
+		{
+			//-----
+		}
+
+		while (getline(level, rowInGame))
+		{
+			std::cout << rowInGame << std::endl;
+		}
+	}
+
+	return 0;
 }
-
-
-/*
-int main()
-{
-auto level = std::ifstream("board1.txt");
-char c;
-
-while (level.get(c))
-{
-std::cout << c;
-}
-}*/

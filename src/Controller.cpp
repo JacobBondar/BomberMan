@@ -2,10 +2,14 @@
 #include "KeyBoard.h"
 
 
+#include <fstream>;
+#include <string>;
+
 Controller::Controller() {}
 
 void Controller::run()
 {
+	Board b();
 	while (true)
 	{
 		auto c = _getch();
@@ -16,7 +20,7 @@ void Controller::run()
 			continue;
 		}
 
-		Board b();
+		
 		b.placePlayer(c.getDirection());
 	}
 }
