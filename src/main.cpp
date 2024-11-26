@@ -4,22 +4,30 @@
 #include <Controller.h>
 #include <stdio.h>
 
+#include <Board.h> // erase!!!!!
+
 int main()
 {
 	//auto c = Controller();
 	//c.run();
+	auto file = std::ifstream("game1.txt");
+	auto b = Board(file);
 
-	auto list = std::ifstream("Playlist.txt");
+	exit(EXIT_SUCCESS);
+}
+
+/*
+* auto list = std::ifstream("Playlist.txt");
 
 	if (!list.is_open())
 	{
 		//-----
 	}
-	
+
 	auto levelName = std::string();
 	auto rowInGame = std::string();
 	char c;
-	
+
 	while (getline(list, levelName))
 	{
 		if (list.fail()) break;
@@ -35,6 +43,4 @@ int main()
 			std::cout << rowInGame << std::endl;
 		}
 	}
-
-	return 0;
-}
+*/

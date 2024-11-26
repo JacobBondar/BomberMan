@@ -9,7 +9,7 @@ Controller::Controller() {}
 
 void Controller::run()
 {
-	Board b();
+	/*Board b();
 	while (true)
 	{
 		auto c = _getch();
@@ -22,5 +22,5 @@ void Controller::run()
 
 		
 		b.placePlayer(c.getDirection());
-	}
+	}*/
 }
