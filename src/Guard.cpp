@@ -12,7 +12,7 @@ Location Guard::getLocation() const
 	return m_location;
 }
 
-void Guard::setLocation(Location loc, bool alive)
+void Guard::setGuard(Location loc, bool alive)
 {
 	m_location = loc;
 	m_alive = alive;
