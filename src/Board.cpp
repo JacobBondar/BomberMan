@@ -1,22 +1,67 @@
 #include "Board.h"
 
-Board::Board(ifstream& file)
+Board::Board() {}
+
+bool Board::createBoard(ifstream& file)
 {
 	insertIntoBoard(file);
-	
+
 	if (!lookForObjects())
 	{
-		cout << "Not valid board!" << endl;
+		cout << "Not valid board! Loading the next level..." << endl;
+		// add a pause
+		return false;
 	}
-	
-	else
-	{
-
-	}
-	
+	return true;
 }
 
+void Board::eraseBoard()
+{
+	Screen::resetLocation();
+}
 
+void Board::updateBoard(Location player, vector<Guard> guards, vector<Bomb> bombs)
+{
+	resetBoard();
+
+	m_player = player;
+	m_guards = guards;
+	m_bombs = bombs;
+
+	setBoard();
+}
+
+void Board::resetBoard()
+{
+	int row = m_player.row;
+	int col = m_player.col;
+
+	m_board[row][0][col] = ' ';
+
+	for (int amount = 0; amount < m_guards.size() - 1; amount++)
+	{
+		row = m_guards[amount].getLocation().row;
+		col = m_guards[amount].getLocation().col;
+
+		m_board[row][0][col] = ' ';
+	}
+}
+
+void Board::setBoard()
+{
+	int row = m_player.row;
+	int col = m_player.col;
+
+	m_board[row][0][col] = '/';
+
+	for (int amount = 0; amount < m_guards.size() - 1; amount++)
+	{
+		row = m_guards[amount].getLocation().row;
+		col = m_guards[amount].getLocation().col;
+
+		m_board[row][0][col] = '!';
+	}
+}
 
 
 
@@ -42,35 +87,38 @@ void Board::insertIntoBoard(ifstream& file)
 
 bool Board::lookForObjects()
 {
-
+	
 	bool player = false, guard = false, door = false;
-	int guardCell = 0, stoneCell = 0;
+	int guardCell = 0, stoneCell = 0, playerCounter = 0, doorCounter = 0;
+	size_t position = 0;
 
-	for (int row = 0; row < m_limit[1].row; row++)
+	for (int row = 0; row < m_limit.row + 1; row++)
 	{
-		for (int col = 0; col < m_limit[1].col; col++)
+		position = m_board[row][0].find('/', 0);
+		if (position != std::string::npos)
 		{
-			if (!player && m_board[row][col].find('/', 0))
-			{
-				m_player.row = row;
-				m_player.row = col;
-				player = true;
-			}
+			m_player.row = row;
+			m_player.col = position;
+			player = true;
+			playerCounter++;
+			if (playerCounter > 1) return false;
+		}
+		
+		position = m_board[row][0].find('D', 0);
+		if (position != std::string::npos)
+		{
+			door = true;
+			doorCounter++;
+			if (doorCounter > 1) return false;
+		}
 
-			if (!door && m_board[row][col].find('D', 0)) door = true;
+		position = m_board[row][0].find('!', 0);
+		if (position != std::string::npos)
+		{
+			if (guardCell >= m_bombs.size()) m_guards.resize(++guardCell);
 
-			if (m_board[row][col].find('!', 0))
-			{
-				guardCell = insertValuesInVactor(row, col, guardCell, guard);
-			}
-
-			if (m_board[row][col].find('@', 0))
-			{
-				if (stoneCell >= m_stone.size()) m_stone.resize(stoneCell + 1);
-
-				m_stone[stoneCell] = {row, col};
-				stoneCell++;
-			}
+			m_guards[guardCell - 1].setGuard({ row, (int)position }, true);
+			guard = true;
 		}
 	}
 	return player && door && guard;
@@ -78,20 +126,12 @@ bool Board::lookForObjects()
 
 // @ - stone, / - player, ! - guard, # - limits
 
-void Board::insertIntoLimit(int row, int col)
+void Board::insertIntoLimit(size_t row, size_t col)
 {
-	m_limit[0].row = m_limit[0].col = 0;
-	m_limit[1].row = row;
-	m_limit[1].col = col;
+	m_limit.row = row;
+	m_limit.col = col;
 }
 
-void Board::insertValuesInGuard(vector<void*> m_bombs ,int row, int col, int &cell, bool &exists)
-{
-	if (cell >= m_bombs.size()) m_guards.resize(++cell);
-	
-	m_guards[cell - 1].setLocation({ row, col }, true);
-	exists = true;
-}
 
 
 
@@ -108,4 +148,3 @@ void Board::insertValuesInGuard(vector<void*> m_bombs ,int row, int col, int &ce
 		}
 		index++;
 	}if we need to check that the board is a full rectangle  */
-
