@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <fstream>
 #include <string>
 #include <Controller.h>
@@ -11,7 +11,10 @@ int main()
 	//auto c = Controller();
 	//c.run();
 	auto file = std::ifstream("game1.txt");
-	auto b = Board(file);
+
+	auto b = Board();
+
+	b.createBoard(file);
 
 	exit(EXIT_SUCCESS);
 }
