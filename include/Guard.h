@@ -7,10 +7,9 @@ class Guard
 {
 public:
 	Guard( Location m_location = {0 , 0}, bool m_alive = true );
-	Guard(Location loc, bool alive);
 	void calcSetNextMove();
 	Location getLocation() const;
-	void setLocation(Location loc, bool alive);
+	void setGuard(Location loc, bool alive);
 	bool isAlive() const;
 
 private:
