@@ -1,14 +1,14 @@
 #pragma once
-
 #include <iostream>
-#include "Location.h"
 
 class Bomb
 {
 public:
-
-
+Bomb();
+int getTimer() const;
+void updateTimer();
+bool explode();
 private:
-
+int m_timer;
 
 };
