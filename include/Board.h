@@ -5,9 +5,10 @@
 #include "Location.h";
 #include <fstream>;
 #include <string>;
-#include <Guard.h>
-#include <Bomb.h>
-#include <Player.h>
+#include "Guard.h"
+#include "Bomb.h"
+#include "Player.h"
+#include "io.h"
 
 using std::vector;
 using std::ifstream;
@@ -19,28 +20,26 @@ using std::endl; // erase?
 class Board
 {
 public:
-	Board() = delete;
-	Board(ifstream& file);
+	Board();
+	bool createBoard(ifstream& file);
 	void eraseBoard();
-	void updateBoard(Location player, vector<Guard> m_guards, vector<Bomb> m_bombs,
-		vector<Location> m_stone);
-	void print();
-	void printString();
+	void updateBoard(Location player, vector<Guard> guards, vector<Bomb> bombs);
+	//void print(int points, int lifes, int level);
+	//void printString();
+	//Location getPlayerLoc();
+	//bool validCell(Location loc);
+	//void addBomb(Location Loc);
 
 private:
 	vector<vector<string>> m_board;
 	vector<Guard> m_guards;
 	vector<Bomb> m_bombs;
-	vector<Location> m_stone;
-	Location m_player;
-	Location m_limit[2]; // [0] - top left, [1] - top right
-						 // if rectangle always perfect, take down arr and leave one
-	//bool player;
-	//bool door;
+	Location m_player = { 0, 0 };
+	Location m_limit = { 0, 0 };
 	
-	bool validCell(Location loc);
 	void insertIntoBoard(ifstream& file);
 	bool lookForObjects();
-	void insertIntoLimit(int row, int col);
-	void insertValuesInGuard(int row, int col, int& cell, bool& exists);
+	void insertIntoLimit(size_t row, size_t col);
+	void resetBoard();
+	void setBoard();
 };
