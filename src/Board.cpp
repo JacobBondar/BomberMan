@@ -124,7 +124,6 @@ int Board::checkHowManyGuardFinito(Location loc)
 	m_stones.shrink_to_fit();
 
 	return guard_down;
-	return 0;
 }
 
 void Board::addBomb(Location loc)
@@ -160,7 +159,7 @@ bool Board::foundDoor(Location loc)
 void Board::insertIntoBoard(ifstream& file)
 {
 	auto rowInGame = std::string();
-	int index = 0, maxLength = 0;
+	int index = 0;
 
 	while (getline(file, rowInGame)) // add the board
 	{
