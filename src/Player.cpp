@@ -6,25 +6,23 @@ using std::endl;
 
 Player::Player(Location newLocation) : m_OriginalPlace(newLocation), m_curPlace(newLocation), m_prePlace (newLocation){}
 //----------------------------------------
-bool Player::setLocation(int direction)
+bool Player::setLocation(auto direction)
 {
-m_prePlace = m_curPlace;
-auto direction = _getch();
+	m_prePlace = m_curPlace;
+	direction = _getch();
 
-if (findingIfDirectionVaild(direction))
-{
-auto direction = _getch();
-m_curPlace = updatingLocation(direction);
+	if (findingIfDirectionVaild(direction))
+	{
+		direction = _getch();
+		m_curPlace = updatingLocation(direction);
 
-return true;
-}
-else
-{
-//cout << "please type one of the arrows to change the location of the player or b for bomb" << endl;
-return false;
-
-
-}
+		return true;
+	}
+	else
+	{
+		//cout << "please type one of the arrows to change the location of the player or b for bomb" << endl;
+		return false;
+	}
 }
 //----------------------------------------
 void Player::addPoints(int newPoints)
@@ -53,7 +51,7 @@ m_curPlace = m_OriginalPlace;
 return m_curPlace;
 }
 //---------------------------------
-bool Player::findingIfDirectionVaild(int direction)
+bool Player::findingIfDirectionVaild(auto direction)
 {
 
 if (direction == 0 || direction == SPECIAL_KEY)

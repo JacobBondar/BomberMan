@@ -9,62 +9,66 @@ bool Board::createBoard(ifstream& file)
 	if (!lookForObjects())
 	{
 		cout << "Not valid board! Loading the next level..." << endl;
-		// add a pause
+		std::this_thread::sleep_for(200ms);
 		return false;
 	}
 	return true;
 }
 
-void Board::eraseBoard()
+void Board::loadAfterMove()
 {
 	Screen::resetLocation();
 }
 
-void Board::updateBoard(Location player, vector<Guard> guards, vector<Bomb> bombs)
+void Board::loadNextLevel()
 {
-	resetBoard();
+	system("cls");
+}
+
+void Board::updateBoard(Location player, vector<Guard> guards, vector<Bomb> bombs,
+	vector<Location> stones)
+{
+	updatePlayerGuards(' ', ' ', false);
 
 	m_player = player;
 	m_guards = guards;
 	m_bombs = bombs;
+	m_stones = stones;
 
-	setBoard();
+	updatePlayerGuards('/', '!', true);
 }
 
-void Board::resetBoard()
+void Board::updatePlayerGuards(char cplayer, char cguard, bool check)
 {
-	int row = m_player.row;
-	int col = m_player.col;
-
-	m_board[row][0][col] = ' ';
+	int row, col;
+	getRowCol(m_player.row, m_player.col, row, col);
+	m_board[row][0][col] = cplayer;
 
 	for (int amount = 0; amount < m_guards.size() - 1; amount++)
 	{
-		row = m_guards[amount].getLocation().row;
-		col = m_guards[amount].getLocation().col;
+		if (check && !m_guards[amount].isAlive())
+		{
+			m_guards.erase(m_guards.begin() + amount);
+			continue;
+		}
 
-		m_board[row][0][col] = ' ';
+		getRowCol(m_guards[amount].getLocation().row, 
+			m_guards[amount].getLocation().col, row, col);
+
+		m_board[row][0][col] = cguard;
 	}
-}
 
-void Board::setBoard()
-{
-	int row = m_player.row;
-	int col = m_player.col;
-
-	m_board[row][0][col] = '/';
-
-	for (int amount = 0; amount < m_guards.size() - 1; amount++)
+	for (int bomb_cell = 0; check && bomb_cell < m_bombs.size() - 1; bomb_cell++)
 	{
-		row = m_guards[amount].getLocation().row;
-		col = m_guards[amount].getLocation().col;
+		if (m_bombs[bomb_cell].explode())
+		{
+			m_bombs.erase(m_bombs.begin() + bomb_cell);
+			continue;
+		}
 
-		m_board[row][0][col] = '!';
+		m_bombs[bomb_cell].updateTimer();
 	}
 }
-
-
-
 
 void Board::insertIntoBoard(ifstream& file)
 {
@@ -120,11 +124,17 @@ bool Board::lookForObjects()
 			m_guards[guardCell - 1].setGuard({ row, (int)position }, true);
 			guard = true;
 		}
+
+		position = m_board[row][0].find('@', 0);
+		if (position != std::string::npos)
+		{
+			if (stoneCell >= m_bombs.size()) m_bombs.resize(++stoneCell);
+
+			m_bombs[stoneCell - 1].setLocation({ row, (int)position });
+		}
 	}
 	return player && door && guard;
 }
-
-// @ - stone, / - player, ! - guard, # - limits
 
 void Board::insertIntoLimit(size_t row, size_t col)
 {
@@ -132,19 +142,8 @@ void Board::insertIntoLimit(size_t row, size_t col)
 	m_limit.col = col;
 }
 
-
-
-
-
-/*index = 0;
-	while (index < m_board.size())
-	{
-		cout << "help\n";
-		if (m_board[index].empty()) cout << "empty" << endl;
-
-		else if (m_board[index][0].length() > maxLength)
-		{
-			maxLength = m_board[0][index].length();
-		}
-		index++;
-	}if we need to check that the board is a full rectangle  */
+void Board::getRowCol(int row, int col,int &rowReturn, int &colReturn)
+{
+	rowReturn = row;
+	colReturn = col;
+}
