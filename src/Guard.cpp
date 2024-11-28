@@ -1,6 +1,6 @@
 #include "Guard.h"
 
-Guard::Guard(Location loc, bool alive) : m_location(loc), m_alive(alive) {}
+Guard::Guard(Location loc, Location ogLoc, bool alive) : m_location(loc), m_ogLocation(ogLoc), m_alive(alive) {}
 
 void Guard::calcSetNextMove() //algoritem... algoritem... goodluck brother
 {
@@ -14,6 +14,7 @@ Location Guard::getLocation() const
 
 void Guard::setGuard(Location loc, bool alive)
 {
+	m_ogLocation = loc;
 	m_location = loc;
 	m_alive = alive;
 }
@@ -21,4 +22,14 @@ void Guard::setGuard(Location loc, bool alive)
 bool Guard::isAlive() const
 {
 	return m_alive;
+}
+
+void Guard::killGuard()
+{
+	m_alive = false;
+}
+
+Location Guard::returnOg()
+{
+	return m_ogLocation;
 }

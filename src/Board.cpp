@@ -25,15 +25,16 @@ void Board::loadNextLevel()
 	system("cls");
 }
 
-void Board::updateBoard(Location player, vector<Guard> guards, vector<Bomb> bombs,
-	vector<Location> stones)
+void Board::updateBoardAfterExploded(Location player, vector <Guard> guards)
 {
 	updatePlayerGuards(' ', ' ', false);
 
 	m_player = player;
-	m_guards = guards;
-	m_bombs = bombs;
-	m_stones = stones;
+	
+	for (int index = 0; index < guards.size(); index++)
+	{
+		m_guards[index] = guards[index].getLocation();
+	}
 
 	updatePlayerGuards('/', '!', true);
 }
@@ -44,31 +45,117 @@ void Board::updatePlayerGuards(char cplayer, char cguard, bool check)
 	getRowCol(m_player.row, m_player.col, row, col);
 	m_board[row][0][col] = cplayer;
 
-	for (int amount = 0; amount < m_guards.size() - 1; amount++)
+	for (int amount = 0; amount < m_guards.size(); amount++)
 	{
-		if (check && !m_guards[amount].isAlive())
-		{
-			m_guards.erase(m_guards.begin() + amount);
-			continue;
-		}
-
-		getRowCol(m_guards[amount].getLocation().row, 
-			m_guards[amount].getLocation().col, row, col);
+		getRowCol(m_guards[amount].row, 
+			m_guards[amount].col, row, col);
 
 		m_board[row][0][col] = cguard;
 	}
 
-	for (int bomb_cell = 0; check && bomb_cell < m_bombs.size() - 1; bomb_cell++)
-	{
-		if (m_bombs[bomb_cell].explode())
-		{
-			m_bombs.erase(m_bombs.begin() + bomb_cell);
-			continue;
-		}
-
-		m_bombs[bomb_cell].updateTimer();
-	}
+	if(check) m_bombs.clear();
 }
+
+void Board::removeGuard(int index)
+{
+	int row, col;
+	getRowCol(m_guards[index].row, m_guards[index].col, row, col);
+	m_board[row][0][col] = ' ';
+
+	m_guards.erase(m_guards.begin() + index);
+	m_guards.shrink_to_fit();
+}
+
+void Board::print(int points, int lifes, int level)
+{
+	for (int row = 0; row < m_limit.row + 1; row++)
+	{
+		for (int col = 0; col < m_limit.col + 1; col++)
+		{
+			cout << m_board[row][0][col];
+		}
+	}
+	cout << "\nPoints: " << points << "\nLifes <3: " << lifes 
+		<< "\nlevel: " << level << endl;
+}
+
+Location Board::getPlayerLoc()
+{
+	return m_player;
+}
+
+vector<Location> Board::getGuards()
+{
+	return m_guards;
+}
+
+vector<Bomb> Board::getBombs()
+{
+	return m_bombs;
+}
+
+bool Board::isGuardHit(Location loc)
+{
+	if (loc.isEqual(m_bombs[0].getLocation()))
+	{
+		int row, col;
+		getRowCol(loc.row, loc.col, row, col);
+		m_board[row][0][col] = ' ';
+		return true;
+	}
+	return false;
+}
+
+int Board::checkHowManyGuardFinito(Location loc)
+{
+	int cell, row, col, guard_down = 0;
+	for (cell = 0; cell < m_stones.size() + 1; cell++)
+	{
+		if (loc.isEqual(m_stones[cell]))
+		{
+			getRowCol(m_stones[cell].row,
+				m_stones[cell].col, row, col);
+
+			m_board[row][0][col] = ' ';
+			m_stones.erase(m_stones.begin() + cell);
+		}
+	}
+	m_guards.shrink_to_fit();
+	m_stones.shrink_to_fit();
+
+	return guard_down;
+	return 0;
+}
+
+void Board::addBomb(Location loc)
+{
+	Bomb b(loc);
+	m_bombs.push_back(b);
+}
+
+bool Board::validCell(Location loc)
+{
+	int row, col;
+	getRowCol(loc.row, loc.col, row, col);
+
+	if (m_board[row][0][col] == '#' || m_board[row][0][col] == '@') return false;
+
+	if (row > m_limit.row || col > m_limit.col || row < 0 || col < 0) return false;
+
+	return true;
+}
+
+bool Board::foundDoor(Location loc)
+{
+	int row, col;
+	getRowCol(loc.row, loc.col, row, col);
+
+	return m_board[row][0][col] == 'D';
+}
+
+
+
+
 
 void Board::insertIntoBoard(ifstream& file)
 {
@@ -91,7 +178,6 @@ void Board::insertIntoBoard(ifstream& file)
 
 bool Board::lookForObjects()
 {
-	
 	bool player = false, guard = false, door = false;
 	int guardCell = 0, stoneCell = 0, playerCounter = 0, doorCounter = 0;
 	size_t position = 0;
@@ -119,18 +205,20 @@ bool Board::lookForObjects()
 		position = m_board[row][0].find('!', 0);
 		if (position != std::string::npos)
 		{
-			if (guardCell >= m_bombs.size()) m_guards.resize(++guardCell);
+			if (guardCell >= m_guards.size()) m_guards.resize(++guardCell);
 
-			m_guards[guardCell - 1].setGuard({ row, (int)position }, true);
+			m_guards[guardCell - 1].row = row;
+			m_guards[guardCell - 1].col = (int)position;
 			guard = true;
 		}
 
 		position = m_board[row][0].find('@', 0);
 		if (position != std::string::npos)
 		{
-			if (stoneCell >= m_bombs.size()) m_bombs.resize(++stoneCell);
+			if (stoneCell >= m_stones.size()) m_stones.resize(++stoneCell);
 
-			m_bombs[stoneCell - 1].setLocation({ row, (int)position });
+			m_stones[stoneCell - 1].row = row;
+			m_stones[stoneCell - 1].row = (int)position;
 		}
 	}
 	return player && door && guard;
@@ -146,4 +234,31 @@ void Board::getRowCol(int row, int col,int &rowReturn, int &colReturn)
 {
 	rowReturn = row;
 	colReturn = col;
+}
+
+bool Board::checkAllCells(Location check)
+{
+	Location loc = m_bombs[0].getLocation();
+
+	Location sides[5] = { loc, loc.returnRow(1), loc.returnRow(-1),
+							loc.returnCol(1), loc.returnCol(-1) };
+
+	for (int index = 0; index < 5; index++)
+	{
+		if (sides[index].isEqual(check)) return true;
+	}
+	return false;
+}
+
+bool Board::explodeBomb()
+{
+	return m_bombs[0].explode();
+}
+
+void Board::reduceBombsTimer()
+{
+	for (int index = 0; index < m_bombs.size(); index++)
+	{
+		m_bombs[index].updateTimer();
+	}
 }

@@ -1,8 +1,8 @@
 #include "Bomb.h"
 
-Bomb::Bomb()
+Bomb::Bomb(Location loc) : m_location(loc)
 {
-m_timer = 5;
+	m_timer = 5;
 }
 //------------------------
 int Bomb::getTimer() const
@@ -28,9 +28,4 @@ return false;
 Location Bomb::getLocation()
 {
 	return m_location;
-}
-
-void Bomb::setLocation(Location loc)
-{
-	m_location = loc;
 }

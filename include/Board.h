@@ -2,12 +2,11 @@
 
 #include <iostream>
 #include <vector>
-#include "Location.h";
-#include <fstream>;
-#include <string>;
-#include "Guard.h"
+#include <Guard.h>
+#include "Location.h"
+#include <fstream>
+#include <string>
 #include "Bomb.h"
-#include "Player.h"
 #include "io.h"
 #include <cstdlib>
 #include <thread>
@@ -28,17 +27,24 @@ public:
 	bool createBoard(ifstream& file);
 	void loadAfterMove();
 	void loadNextLevel();
-	void updateBoard(Location player, vector<Guard> guards, vector<Bomb> bombs,
-		vector<Location> stones);
-	//void print(int points, int lifes, int level);
-	//void printString();
-	//Location getPlayerLoc();
-	//bool validCell(Location loc);
-	//void addBomb(Location Loc);
+	void updateBoardAfterExploded(Location player, vector<Guard> guards);
+	void print(int points, int lifes, int level);
+	Location getPlayerLoc();
+	vector<Location> getGuards();
+	vector<Bomb> getBombs();
+	int checkHowManyGuardFinito(Location loc);
+	bool isGuardHit(Location Loc);
+	bool explodeBomb();
+	bool validCell(Location loc);
+	void addBomb(Location loc);
+	bool foundDoor(Location loc);
+	bool checkAllCells(Location loc);
+	void removeGuard(int index);
+	void reduceBombsTimer();
 
 private:
 	vector<vector<string>> m_board;
-	vector<Guard> m_guards;
+	vector<Location> m_guards;
 	vector<Bomb> m_bombs;
 	vector<Location> m_stones;
 	Location m_player = { 0, 0 };
@@ -49,6 +55,7 @@ private:
 	void insertIntoLimit(size_t row, size_t col);
 	void getRowCol(int row, int col, int& rowReturn, int& colReturn);
 	void updatePlayerGuards(char cplayer, char cguard, bool check);
+	
 };
 
 // @ - stone, / - player, ! - guard, # - limits

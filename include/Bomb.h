@@ -5,7 +5,7 @@
 class Bomb
 {
 public:
-	Bomb();
+	Bomb(Location loc);
 	int getTimer() const;
 	void updateTimer();
 	bool explode();

@@ -4,12 +4,13 @@
 using std::cout;
 using std::endl;
 
+Player::Player() : m_OriginalPlace({0 , 0}), m_curPlace({ 0 , 0 }), m_prePlace({ 0 , 0 }) {}
+
 Player::Player(Location newLocation) : m_OriginalPlace(newLocation), m_curPlace(newLocation), m_prePlace (newLocation){}
 //----------------------------------------
 bool Player::setLocation(auto direction)
 {
 	m_prePlace = m_curPlace;
-	direction = _getch();
 
 	if (findingIfDirectionVaild(direction))
 	{
@@ -27,12 +28,14 @@ bool Player::setLocation(auto direction)
 //----------------------------------------
 void Player::addPoints(int newPoints)
 {
-m_points += newPoints;
+	m_points += newPoints;
 }
 //--------------------------------------
-void Player::gotHit()
+bool Player::gotHitDead()
 {
-m_lives--;
+	m_lives--;
+	if (m_lives == 0) return true;
+	return false;
 }
 //--------------------------------------
 int Player::getPoints() const
