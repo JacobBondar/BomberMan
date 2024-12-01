@@ -9,7 +9,7 @@ Controller::Controller() {}
 void Controller::run()
 {
     ifstream file, fileLevel;
-    string level;
+    string nameLevel;
     int numLevel = 0;
 
     file.open("Playlist.txt");
@@ -19,21 +19,28 @@ void Controller::run()
         exit(EXIT_FAILURE);
     }
 
-    while (getline(file, level))
+    while (file >> nameLevel)
     {
+        cout << nameLevel << endl;
         numLevel++;
-        fileLevel.open(level);
+        //fileLevel.open(nameLevel);
+        fileLevel.open("game1.txt");
         if (!fileLevel)
         {
-            std::cerr << "Can't open the game file, moving to the next one...\n";
+            std::cerr << "Can't open the game file, moving to the next one...\n"; // add timer pls ty
             continue;
         }
 
-        if (!m_board.createBoard(fileLevel)) continue;
+        if (!m_board.createBoard(fileLevel))
+        {
+            std::cout << "Invalid level name, loading the next level...\n"; // add timer pls ty
+            continue;
+        }
 
         m_board.loadNextLevel();
+        m_board.print(0, 0, 0);
 
-        if (levelControl(numLevel))
+        if (levelControl(numLevel)) // returns won or lost
         {
             //טעינת שלב הבא
             
@@ -49,7 +56,7 @@ bool Controller::levelControl(int numLevel)
     int guardCounter = 0;
 
     //מקבלת את מיקום השחקנים בהתחלה
-    for (int index = 0; index < m_board.getGuards().size() + 1; index++) //check +1
+    for (int index = 0; index < m_board.getGuards().size(); index++)
     {
         if (index >= m_guard.size()) m_guard.resize(index + 1);
         m_guard[index].setGuard(m_board.getGuards()[index], true);
@@ -58,10 +65,10 @@ bool Controller::levelControl(int numLevel)
 
     bool hurt = false, dead = false, won = false;
     //כל עוד השחקן שלי עם חיים ממשיכים 
-    while (m_player.getLives() != 0)
+    while (m_player.getLives() > 0)
     {
         hurt = false;
-        playTurn(1, hurt, dead, won, numLevel);
+        playTurn(true, hurt, dead, won, numLevel);
         if (won)
         {
             m_player.addPoints(25 + 3 * guardCounter);
@@ -70,7 +77,7 @@ bool Controller::levelControl(int numLevel)
         if (dead) return false;
         if (hurt) continue;
 
-        playTurn(0, hurt, dead, won, numLevel);
+        playTurn(false, hurt, dead, won, numLevel);
         if (dead) return false;
     }
     return false;
@@ -80,7 +87,8 @@ void Controller::playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, in
 {
     while (playerTurn) //מתגלגלים בלולאה כל עוד השחקן מפגר ושם לי תווים לא נכונים (חיצים או פצצה)
     {
-        auto direction = _getch();
+        int direction = _getch();
+        
         if (m_player.setLocation(direction)) //במזיז את השחקן לאן ששמתי מבחינת חצים 
         {
             if (m_board.validCell(m_player.getLocation())) break; // אם נכון אז תשים אותו איפה שרציתי
@@ -92,48 +100,34 @@ void Controller::playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, in
             break;
         }
     }
-
     for (int guardCell = 0; !playerTurn && guardCell < m_guard.size(); guardCell++)
     {
-        m_guard[guardCell].calcSetNextMove();
-        if (m_guard[guardCell].getLocation().isEqual(m_player.getLocation()))
-        {
-            if (endTurnFunction(won, hurt, dead, numLevel)) return;
-            m_board.print(m_player.getPoints(), m_player.getLives(), numLevel);
-        }
-    }
-
-    if(playerTurn) endTurnFunction(won, hurt, dead, numLevel);
-}
-
-bool Controller::endTurnFunction(bool& won, bool& hurt, bool& dead, int numLevel)
-{
-    switch (endOfTurn())
-    {
-    case 0: // won level
-        won = true;
-        return true;
-    case 1: // hurt
-        hurt = true;
-        return true;
-    case 2:
-        dead = true;
-        return true;
-    case 3:
+        m_guard[guardCell].calcSetNextMove(m_player.getLocation());
+        endOfTurn(won, hurt, dead);
+        if (dead) return;
         m_board.print(m_player.getPoints(), m_player.getLives(), numLevel);
-        break;
     }
-    return false;
+
+    if (playerTurn)
+    {
+        endOfTurn(won, hurt, dead);
+        if (dead) return;
+        m_board.print(m_player.getPoints(), m_player.getLives(), numLevel);
+    }
 }
 
-
-
-int Controller::endOfTurn()
+void Controller::endOfTurn(bool& won, bool& hurt, bool& dead) // 0 1 2
 {
     m_board.reduceBombsTimer();
+    cout << "hi\n";
     m_board.loadAfterMove(); //שמה את המיקום במקום 0
-    if (m_board.foundDoor(m_player.getLocation())) return 0; // מציאת דלת
-
+    cout << "hi\n";
+    if (m_board.foundDoor(m_player.getLocation()))
+    {
+        won = true; // מציאת דלת
+        return;
+    }
+    cout << "hi\n";
     if(m_board.explodeBomb()) 
     {
         for (int index = 0; index < m_guard.size(); index++)
@@ -149,7 +143,11 @@ int Controller::endOfTurn()
 
         if (m_board.checkAllCells(m_player.getLocation()))
         {
-            if (m_player.gotHitDead()) return 2;
+            if (m_player.gotHitDead())
+            {
+                dead = true;
+                return;
+            }
             m_player.SetOgPlace();
             for (int index = 0; index < m_guard.size(); index++)
             {
@@ -157,17 +155,23 @@ int Controller::endOfTurn()
             }
             m_board.updateBoardAfterExploded(m_player.getLocation(), m_guard);
 
-            return 1;
+            hurt = true;
+            return;
         }
+        m_board.removeStonesExploded();
     }
 
     for (int index = 0; index < m_guard.size(); index++)
     {
         if (m_player.getLocation().isEqual(m_guard[index].getLocation()))
         {
-            if (m_player.gotHitDead()) return 2;
-            return 1;
+            if (m_player.gotHitDead())
+            {
+                dead = true;
+                return;
+            }
+            hurt = true;
+            return;
         }
     }
-    return 3;
 }

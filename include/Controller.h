@@ -22,8 +22,7 @@ private:
 	Player m_player;
 	vector <Guard> m_guard;
 
-	int endOfTurn();
+	void endOfTurn(bool& won, bool& hurt, bool& dead);
 	bool levelControl(int numLevel);
 	void playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, int numLevel);
-	bool endTurnFunction(bool& won, bool& hurt, bool& dead, int numLevel);
 };

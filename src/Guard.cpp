@@ -2,9 +2,30 @@
 
 Guard::Guard(Location loc, Location ogLoc, bool alive) : m_location(loc), m_ogLocation(ogLoc), m_alive(alive) {}
 
-void Guard::calcSetNextMove() //algoritem... algoritem... goodluck brother
+void Guard::calcSetNextMove(Location locPlayer) //algoritem... algoritem... goodluck brother... ez kissy face ;-)
 {
-	//algoritem... algoritem... goodluck brother
+	if (m_location.isEqual(locPlayer));
+
+	else if (m_location.isNearBy(locPlayer)) m_location = locPlayer;
+
+	else if (m_location.isDiagonal(locPlayer));
+
+	else
+	{
+		int xLength = lengthDiffer(m_location.col, locPlayer.col);
+		int yLength = lengthDiffer(m_location.row, locPlayer.row);
+
+		if (yLength > xLength)
+		{
+			if (m_location.isHigher(locPlayer)) m_location.row--;
+			else m_location.row++;
+		}
+		else
+		{
+			if (m_location.isToTheRightOf(locPlayer)) m_location.col--;
+			else m_location.col++;
+		}
+	}
 }
 
 Location Guard::getLocation() const
@@ -32,4 +53,9 @@ void Guard::killGuard()
 Location Guard::returnOg()
 {
 	return m_ogLocation;
+}
+
+int Guard::lengthDiffer(int firstValue, int secondValue)
+{
+	return abs(firstValue - secondValue);
 }

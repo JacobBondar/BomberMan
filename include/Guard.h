@@ -7,7 +7,7 @@ class Guard
 {
 public:
 	Guard(Location m_location = { 0 , 0 }, Location m_ogLocation = { 0 , 0 }, bool m_alive = true);
-	void calcSetNextMove();
+	void calcSetNextMove(Location loc);
 	Location getLocation() const;
 	void setGuard(Location loc, bool alive);
 	bool isAlive() const;
@@ -19,4 +19,5 @@ private:
 	Location m_ogLocation;
 	bool m_alive;
 
+	int lengthDiffer(int firstValue, int secondValue);
 };

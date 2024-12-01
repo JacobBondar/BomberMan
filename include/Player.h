@@ -25,7 +25,7 @@ public:
 	int getLives()const;
 	Location getLocation() const;
 	Location SetOgPlace();
-	bool setLocation(auto direction);
+	bool setLocation(int direction); // auto
 	void changePosBack();
 
 private:

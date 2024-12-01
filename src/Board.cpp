@@ -17,7 +17,7 @@ bool Board::createBoard(ifstream& file)
 
 void Board::loadAfterMove()
 {
-	Screen::resetLocation();
+	//Screen::resetLocation();
 }
 
 void Board::loadNextLevel()
@@ -74,6 +74,7 @@ void Board::print(int points, int lifes, int level)
 		{
 			cout << m_board[row][0][col];
 		}
+		cout << endl;
 	}
 	cout << "\nPoints: " << points << "\nLifes <3: " << lifes 
 		<< "\nlevel: " << level << endl;
@@ -94,7 +95,7 @@ vector<Bomb> Board::getBombs()
 	return m_bombs;
 }
 
-bool Board::isGuardHit(Location loc)
+/*bool Board::isGuardHit(Location loc)
 {
 	if (loc.isEqual(m_bombs[0].getLocation()))
 	{
@@ -104,14 +105,14 @@ bool Board::isGuardHit(Location loc)
 		return true;
 	}
 	return false;
-}
+}*/
 
-int Board::checkHowManyGuardFinito(Location loc)
+void Board::removeStonesExploded()
 {
-	int cell, row, col, guard_down = 0;
-	for (cell = 0; cell < m_stones.size() + 1; cell++)
+	int cell, row, col;
+	for (cell = 0; cell < m_stones.size(); cell++)
 	{
-		if (loc.isEqual(m_stones[cell]))
+		if (checkAllCells(m_stones[cell]))
 		{
 			getRowCol(m_stones[cell].row,
 				m_stones[cell].col, row, col);
@@ -120,10 +121,7 @@ int Board::checkHowManyGuardFinito(Location loc)
 			m_stones.erase(m_stones.begin() + cell);
 		}
 	}
-	m_guards.shrink_to_fit();
 	m_stones.shrink_to_fit();
-
-	return guard_down;
 }
 
 void Board::addBomb(Location loc)
@@ -187,7 +185,7 @@ bool Board::lookForObjects()
 		if (position != std::string::npos)
 		{
 			m_player.row = row;
-			m_player.col = position;
+			m_player.col = (int)position;
 			player = true;
 			playerCounter++;
 			if (playerCounter > 1) return false;
@@ -225,8 +223,8 @@ bool Board::lookForObjects()
 
 void Board::insertIntoLimit(size_t row, size_t col)
 {
-	m_limit.row = row;
-	m_limit.col = col;
+	m_limit.row = (int)row;
+	m_limit.col = (int)col;
 }
 
 void Board::getRowCol(int row, int col,int &rowReturn, int &colReturn)

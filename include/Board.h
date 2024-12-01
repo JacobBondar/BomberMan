@@ -32,8 +32,8 @@ public:
 	Location getPlayerLoc();
 	vector<Location> getGuards();
 	vector<Bomb> getBombs();
-	int checkHowManyGuardFinito(Location loc);
-	bool isGuardHit(Location Loc);
+	void removeStonesExploded();
+	//bool isGuardHit(Location Loc);
 	bool explodeBomb();
 	bool validCell(Location loc);
 	void addBomb(Location loc);

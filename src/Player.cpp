@@ -8,7 +8,7 @@ Player::Player() : m_OriginalPlace({0 , 0}), m_curPlace({ 0 , 0 }), m_prePlace({
 
 Player::Player(Location newLocation) : m_OriginalPlace(newLocation), m_curPlace(newLocation), m_prePlace (newLocation){}
 //----------------------------------------
-bool Player::setLocation(auto direction)
+bool Player::setLocation(int direction)
 {
 	m_prePlace = m_curPlace;
 
