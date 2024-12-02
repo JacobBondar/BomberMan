@@ -1,4 +1,5 @@
 #include "Board.h"
+#include <cstdlib>
 
 Board::Board() {}
 
@@ -25,8 +26,9 @@ void Board::loadNextLevel()
 	system("cls");
 }
 
-void Board::updateBoardAfterHit(Location ogPlayer, Location newPlayer, vector <Guard> guards)
+void Board::updateBoardAfterHit(Location newPlayer, Location ogPlayer, vector <Guard> guards)
 {
+	m_player = newPlayer;
 	updatePlayerGuards(' ', ' ', false);
 
 	m_player = ogPlayer;
@@ -95,18 +97,6 @@ vector<Bomb> Board::getBombs()
 	return m_bombs;
 }
 
-/*bool Board::isGuardHit(Location loc)
-{
-	if (loc.isEqual(m_bombs[0].getLocation()))
-	{
-		int row, col;
-		getRowCol(loc.row, loc.col, row, col);
-		m_board[row][0][col] = ' ';
-		return true;
-	}
-	return false;
-}*/
-
 void Board::removeStonesExploded()
 {
 	int cell, row, col;
@@ -127,7 +117,13 @@ void Board::removeStonesExploded()
 void Board::addBomb(Location loc)
 {
 	Bomb b(loc);
+	//int size = int(m_bombs.size());
+
+	//m_bombs.resize(size + 1);
 	m_bombs.push_back(b);
+
+
+
 }
 
 bool Board::validCell(Location loc)

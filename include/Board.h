@@ -27,7 +27,7 @@ public:
 	bool createBoard(ifstream& file);
 	void loadAfterMove();
 	void loadNextLevel();
-	void updateBoardAfterHit(Location ogPlayer, Location player, vector<Guard> guards);
+	void updateBoardAfterHit(Location newPlayer, Location ogPlayer, vector<Guard> guards);
 	void print(int points, int lifes, int level);
 	Location getPlayerLoc();
 	vector<Location> getGuards();

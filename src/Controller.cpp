@@ -98,7 +98,7 @@ void Controller::playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, in
                 //m_board.setPlayerLocation(m_player.getLocation());
                 break; // אם נכון אז תשים אותו איפה שרציתי
             }
-            m_player.setPrePlace();
+            m_player.changePosBack();
         }
         
         else if (direction == 'b') // פצצה
@@ -137,6 +137,8 @@ void Controller::endOfTurn(bool& won, bool& hurt, bool& dead, bool player)
         return;
     }
 
+    if (player) m_board.moveObject(m_player.getPrePlace(), m_player.getLocation(), '/');
+
     if(m_board.explodeBomb())
     {
         for (int index = 0; index < m_guard.size(); index++)
@@ -162,7 +164,7 @@ void Controller::endOfTurn(bool& won, bool& hurt, bool& dead, bool player)
             {
                 m_guard[index].returnOg();
             }
-            m_board.updateBoardAfterHit(m_player.getOg(), m_player.getLocation(), m_guard);
+            m_board.updateBoardAfterHit(m_player.getLocation(), m_player.getOg(), m_guard);
             m_player.SetOgPlace();
 
             hurt = true;
@@ -175,7 +177,7 @@ void Controller::endOfTurn(bool& won, bool& hurt, bool& dead, bool player)
     {
         if (m_player.getLocation().isEqual(m_guard[index].getLocation()))
         {
-            m_board.updateBoardAfterHit(m_player.getOg(), m_player.getLocation(), m_guard);
+            m_board.updateBoardAfterHit(m_player.getLocation() ,m_player.getOg(), m_guard);
             m_player.SetOgPlace();
             for (int index = 0; index < m_guard.size(); index++)
             {
@@ -191,6 +193,4 @@ void Controller::endOfTurn(bool& won, bool& hurt, bool& dead, bool player)
             return;
         }
     }
-
-    if(player) m_board.moveObject(m_player.getPrePlace(), m_player.getLocation(), '/');
 }

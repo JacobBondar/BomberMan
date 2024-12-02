@@ -10,10 +10,8 @@ public:
 	void updateTimer();
 	bool explode();
 	Location getLocation();
-	void setLocation(Location loc);
 
 private:
 	int m_timer;
 	Location m_location;
-
 };

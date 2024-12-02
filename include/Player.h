@@ -24,11 +24,10 @@ public:
 	int getPoints() const;
 	int getLives()const;
 	Location getLocation() const;
-	Location SetOgPlace();
+	void SetOgPlace();
 	bool setLocation(int direction); // auto
 	void changePosBack();
 	Location getPrePlace();
-	void setPrePlace();
 	Location getOg();
 
 private:
@@ -38,6 +37,6 @@ private:
 	int m_lives = 3;
 	int m_points = 0;
 
-	bool findingIfDirectionVaild(auto direction);
+	bool findingIfDirectionVaild(int direction);
 	void updatingLocation(int direction);
 };

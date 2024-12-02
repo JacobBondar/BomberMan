@@ -48,13 +48,12 @@ Location Player::getLocation() const
 return m_curPlace;
 }
 //-----------------------------------
-Location Player::SetOgPlace()
+void Player::SetOgPlace()
 {
-m_curPlace = m_OriginalPlace;
-return m_curPlace;
+	m_curPlace = m_OriginalPlace;
 }
 //---------------------------------
-bool Player::findingIfDirectionVaild(auto direction)
+bool Player::findingIfDirectionVaild(int direction)
 {
 
 	if (direction == 0 || direction == SPECIAL_KEY)
@@ -97,22 +96,17 @@ void Player::updatingLocation(int direction)
 //---------------------------------
 int Player::getLives()const
 {
-return m_lives;
+	return m_lives;
 }
 //------------------------------
 void Player::changePosBack()
 {
-m_curPlace = m_prePlace;
+	m_curPlace = m_prePlace;
 }
 
 Location Player::getPrePlace()
 {
 	return m_prePlace;
-}
-
-void Player::setPrePlace()
-{
-	m_curPlace = m_prePlace;
 }
 
 Location Player::getOg()
