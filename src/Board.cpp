@@ -76,7 +76,7 @@ void Board::print(int points, int lifes, int level)
 	{
 		getRowCol(m_bombs[cell].getLocation().row, m_bombs[cell].getLocation().col,
 			row, col);
-		m_board[row][0][col] = m_bombs[cell].getTimer() + 50;
+		m_board[row][0][col] = m_bombs[cell].getTimer() + 48;
 	}
 	
 	for (row = 0; row < m_limit.row + 1; row++)
