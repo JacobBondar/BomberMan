@@ -45,6 +45,7 @@ void Controller::run()
 
         }
         m_board.resetBoard();
+        m_guard.clear();
         fileLevel.close();
     }
     file.close();
@@ -111,12 +112,12 @@ void Controller::playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, in
     for (int guardCell = 0; !playerTurn && guardCell < m_guard.size(); guardCell++)
     {
         Location prev = m_guard[guardCell].calcSetNextMove(m_player.getLocation());
-
         if (m_board.checkIfStone(m_guard[guardCell].getLocation())) m_guard[guardCell].setGuard(prev, 1);
         m_board.moveObject(prev, m_guard[guardCell].getLocation(), '!');
         endOfTurn(won, hurt, dead, playerTurn);
         if (dead) return;
         m_board.print(m_player.getPoints(), m_player.getLives(), numLevel);
+        std::this_thread::sleep_for(200ms);
     }
 
     if (playerTurn)
@@ -130,17 +131,36 @@ void Controller::playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, in
 void Controller::endOfTurn(bool& won, bool& hurt, bool& dead, bool player)
 {
     m_board.reduceBombsTimer();
-    //m_board.loadAfterMove(); //שמה את המיקום במקום 0
-    if (m_board.foundDoor(m_player.getLocation()))
-    {
-        won = true; // מציאת דלת
-        return;
-    }
 
-    if (player) m_board.moveObject(m_player.getPrePlace(), m_player.getLocation(), '/');
+    if (player)
+    {
+        if (m_board.moveObject(m_player.getPrePlace(), m_player.getLocation(), '/'))
+        {
+            won = true; // מציאת דלת
+            return;
+        }
+    }
 
     if(m_board.explodeBomb())
     {
+        if (m_board.checkAllCells(m_player.getLocation()))
+        {
+            if (m_player.gotHitDead())
+            {
+                dead = true;
+                return;
+            }
+            m_board.updateBoardAfterHit(m_player.getLocation(), m_player.getOg(), m_guard);
+            m_player.SetOgPlace();
+            for (int index = 0; index < m_guard.size(); index++)
+            {
+                m_guard[index].setLocation(m_guard[index].returnOg());
+            }
+
+            hurt = true;
+            return;
+        }
+
         for (int index = 0; index < m_guard.size(); index++)
         {
             if (m_board.checkAllCells(m_guard[index].getLocation()))
@@ -152,24 +172,7 @@ void Controller::endOfTurn(bool& won, bool& hurt, bool& dead, bool player)
         }
         m_guard.shrink_to_fit();
 
-        if (m_board.checkAllCells(m_player.getLocation()))
-        {
-            if (m_player.gotHitDead())
-            {
-                dead = true;
-                return;
-            }
-            m_player.SetOgPlace();
-            for (int index = 0; index < m_guard.size(); index++)
-            {
-                m_guard[index].returnOg();
-            }
-            m_board.updateBoardAfterHit(m_player.getLocation(), m_player.getOg(), m_guard);
-            m_player.SetOgPlace();
-
-            hurt = true;
-            return;
-        }
+        m_board.removeBomb();
         m_board.removeStonesExploded();
     }
 

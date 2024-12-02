@@ -70,9 +70,18 @@ void Board::removeGuard(int index)
 void Board::print(int points, int lifes, int level)
 {
 	loadAfterMove();
-	for (int row = 0; row < m_limit.row + 1; row++)
+	int row, col;
+	
+	for (int cell = 0; cell < m_bombs.size(); cell++)
 	{
-		for (int col = 0; col < m_limit.col + 1; col++)
+		getRowCol(m_bombs[cell].getLocation().row, m_bombs[cell].getLocation().col,
+			row, col);
+		m_board[row][0][col] = m_bombs[cell].getTimer() + 50;
+	}
+	
+	for (row = 0; row < m_limit.row + 1; row++)
+	{
+		for (col = 0; col < m_limit.col + 1; col++)
 		{
 			cout << m_board[row][0][col];
 		}
@@ -117,13 +126,7 @@ void Board::removeStonesExploded()
 void Board::addBomb(Location loc)
 {
 	Bomb b(loc);
-	//int size = int(m_bombs.size());
-
-	//m_bombs.resize(size + 1);
 	m_bombs.push_back(b);
-
-
-
 }
 
 bool Board::validCell(Location loc)
@@ -257,14 +260,16 @@ void Board::reduceBombsTimer()
 	}
 }
 
-void Board::moveObject(Location prev, Location to, char type)
+bool Board::moveObject(Location prev, Location to, char type)
 {
+	bool flag = foundDoor(to);
 	int rowPrev, colPrev, rowTo, colTo;
 	getRowCol(prev.row, prev.col, rowPrev, colPrev);
 	getRowCol(to.row, to.col, rowTo, colTo);
 
 	m_board[rowPrev][0][colPrev] = ' ';
 	m_board[rowTo][0][colTo] = type;
+	return flag;
 }
 
 bool Board::checkIfStone(Location loc)
@@ -288,4 +293,10 @@ void Board::resetBoard()
 void Board::setPlayerLocation(Location loc)
 {
 	m_player = loc;
+}
+
+void Board::removeBomb()
+{
+	m_board.erase(m_board.begin() + 0);
+	m_board.shrink_to_fit();
 }

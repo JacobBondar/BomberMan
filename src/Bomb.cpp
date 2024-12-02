@@ -7,7 +7,7 @@ Bomb::Bomb(Location loc) : m_location(loc)
 //------------------------
 int Bomb::getTimer() const
 {
-return m_timer;
+	return m_timer;
 }
 //-------------------------
 void Bomb::updateTimer()
@@ -17,12 +17,9 @@ void Bomb::updateTimer()
 //-------------------------
 bool Bomb::explode()
 {
-if (m_timer == 0)
-{
-return true;
-}
+	if (m_timer == 0) return true;
 
-return false;
+	return false;
 }
 
 Location Bomb::getLocation()

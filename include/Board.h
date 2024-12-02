@@ -40,8 +40,9 @@ public:
 	bool foundDoor(Location loc);
 	bool checkAllCells(Location loc);
 	void removeGuard(int index);
+	void removeBomb();
 	void reduceBombsTimer();
-	void moveObject(Location prev, Location to, char type);
+	bool moveObject(Location prev, Location to, char type);
 	bool checkIfStone(Location loc);
 	void resetBoard();
 	void setPlayerLocation(Location loc);
