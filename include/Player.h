@@ -27,6 +27,8 @@ public:
 	Location SetOgPlace();
 	bool setLocation(int direction); // auto
 	void changePosBack();
+	Location getPrePlace();
+	void setPrePlace();
 
 private:
 	Location m_OriginalPlace;
@@ -36,5 +38,5 @@ private:
 	int m_points = 0;
 
 	bool findingIfDirectionVaild(auto direction);
-	Location updatingLocation(int direction);
+	void updatingLocation(int direction);
 };

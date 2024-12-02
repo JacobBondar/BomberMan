@@ -15,7 +15,7 @@ bool Player::setLocation(int direction)
 	if (findingIfDirectionVaild(direction))
 	{
 		direction = _getch();
-		m_curPlace = updatingLocation(direction);
+		updatingLocation(direction);
 
 		return true;
 	}
@@ -57,49 +57,42 @@ return m_curPlace;
 bool Player::findingIfDirectionVaild(auto direction)
 {
 
-if (direction == 0 || direction == SPECIAL_KEY)
-{
-return true;
-}
-
-else
-{
-return false;
-}
+	if (direction == 0 || direction == SPECIAL_KEY)
+	{
+		return true;
+	}
+	return false;
 }
 //-----------------------------------
-Location Player::updatingLocation(int direction)
+void Player::updatingLocation(int direction)
 {
-
-switch (direction)
-{
-case UP:
-{
-m_curPlace.row -= 1;
-break;
+	switch (direction)
+	{
+		case UP:
+		{
+			m_curPlace.row -= 1;
+			break;
+		}
+		case DOWN:
+		{
+			m_curPlace.row += 1;
+			break;
+		}
+		case RIGHT:
+		{
+			m_curPlace.col += 1;
+			break;
+		}
+		case LEFT:
+		{
+			m_curPlace.col -= 1;
+			break;
+		}
+		default:
+		{
+			break;
+		}
 }
-case DOWN:
-{
-m_curPlace.row += 1;
-break;
-}
-case RIGHT:
-{
-m_curPlace.col += 1;
-break;
-}
-case LEFT:
-{
-m_curPlace.col -= 1;
-break;
-}
-default:
-{
-break;
-}
-}
-
-return m_curPlace;
 }
 //---------------------------------
 int Player::getLives()const
@@ -110,4 +103,14 @@ return m_lives;
 void Player::changePosBack()
 {
 m_curPlace = m_prePlace;
+}
+
+Location Player::getPrePlace()
+{
+	return m_prePlace;
+}
+
+void Player::setPrePlace()
+{
+	m_curPlace = m_prePlace;
 }

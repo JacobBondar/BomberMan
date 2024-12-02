@@ -8,6 +8,16 @@ int main()
 {
     Controller c;
 	c.run();
+
+    /*while (1)
+    {
+        int direction = _getch();
+
+        std::cout << "signal = " << direction << std::endl;
+        direction = _getch();
+        std::cout << "actual = " << direction << std::endl;
+    }*/
+    
     
     /*ifstream file, fileLevel;
     string nameLevel;

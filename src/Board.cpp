@@ -17,7 +17,7 @@ bool Board::createBoard(ifstream& file)
 
 void Board::loadAfterMove()
 {
-	//Screen::resetLocation();
+	Screen::resetLocation();
 }
 
 void Board::loadNextLevel()
@@ -68,6 +68,7 @@ void Board::removeGuard(int index)
 
 void Board::print(int points, int lifes, int level)
 {
+	loadAfterMove();
 	for (int row = 0; row < m_limit.row + 1; row++)
 	{
 		for (int col = 0; col < m_limit.col + 1; col++)
@@ -258,4 +259,32 @@ void Board::reduceBombsTimer()
 	{
 		m_bombs[index].updateTimer();
 	}
+}
+
+void Board::moveObject(Location prev, Location to, char type)
+{
+	int rowPrev, colPrev, rowTo, colTo;
+	getRowCol(prev.row, prev.col, rowPrev, colPrev);
+	getRowCol(to.row, to.col, rowTo, colTo);
+
+	m_board[rowPrev][0][colPrev] = ' ';
+	m_board[rowTo][0][colTo] = type;
+}
+
+bool Board::checkIfStone(Location loc)
+{
+	int row, col;
+	getRowCol(loc.row, loc.col, row, col);
+
+	return m_board[row][0][col] == '@';
+}
+
+void Board::resetBoard()
+{
+	m_board.clear();
+	m_guards.clear();
+	m_bombs.clear();
+	m_stones.clear();
+	m_player = { 0, 0 };
+	m_limit = { 0, 0 };
 }

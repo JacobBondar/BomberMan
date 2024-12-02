@@ -23,8 +23,7 @@ void Controller::run()
     {
         cout << nameLevel << endl;
         numLevel++;
-        //fileLevel.open(nameLevel);
-        fileLevel.open("game1.txt");
+        fileLevel.open(nameLevel);
         if (!fileLevel)
         {
             std::cerr << "Can't open the game file, moving to the next one...\n"; // add timer pls ty
@@ -38,7 +37,6 @@ void Controller::run()
         }
 
         m_board.loadNextLevel();
-        m_board.print(0, 0, 0);
 
         if (levelControl(numLevel)) // returns won or lost
         {
@@ -46,7 +44,10 @@ void Controller::run()
             
 
         }
+        m_board.resetBoard();
+        fileLevel.close();
     }
+    file.close();
 }
 
 bool Controller::levelControl(int numLevel)
@@ -62,6 +63,7 @@ bool Controller::levelControl(int numLevel)
         m_guard[index].setGuard(m_board.getGuards()[index], true);
         guardCounter++;
     }
+    m_board.print(m_player.getPoints(), m_player.getLives(), numLevel);
 
     bool hurt = false, dead = false, won = false;
     //כל עוד השחקן שלי עם חיים ממשיכים 
@@ -91,7 +93,12 @@ void Controller::playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, in
         
         if (m_player.setLocation(direction)) //במזיז את השחקן לאן ששמתי מבחינת חצים 
         {
-            if (m_board.validCell(m_player.getLocation())) break; // אם נכון אז תשים אותו איפה שרציתי
+            if (m_board.validCell(m_player.getLocation()))
+            {
+                break; // אם נכון אז תשים אותו איפה שרציתי
+            }
+            else m_player.setPrePlace();
+            // check why doesnt work limits!!!!!!!!!!!!!!
         }
 
         if (direction == 'b') // פצצה
@@ -102,32 +109,33 @@ void Controller::playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, in
     }
     for (int guardCell = 0; !playerTurn && guardCell < m_guard.size(); guardCell++)
     {
-        m_guard[guardCell].calcSetNextMove(m_player.getLocation());
-        endOfTurn(won, hurt, dead);
+        Location prev = m_guard[guardCell].calcSetNextMove(m_player.getLocation());
+
+        if (m_board.checkIfStone(m_guard[guardCell].getLocation())) m_guard[guardCell].setGuard(prev, 1);
+        m_board.moveObject(prev, m_guard[guardCell].getLocation(), '!');
+        endOfTurn(won, hurt, dead, playerTurn);
         if (dead) return;
         m_board.print(m_player.getPoints(), m_player.getLives(), numLevel);
     }
 
     if (playerTurn)
     {
-        endOfTurn(won, hurt, dead);
+        endOfTurn(won, hurt, dead, playerTurn);
         if (dead) return;
         m_board.print(m_player.getPoints(), m_player.getLives(), numLevel);
     }
 }
 
-void Controller::endOfTurn(bool& won, bool& hurt, bool& dead) // 0 1 2
+void Controller::endOfTurn(bool& won, bool& hurt, bool& dead, bool player) // 0 1 2
 {
     m_board.reduceBombsTimer();
-    cout << "hi\n";
-    m_board.loadAfterMove(); //שמה את המיקום במקום 0
-    cout << "hi\n";
+    //m_board.loadAfterMove(); //שמה את המיקום במקום 0
     if (m_board.foundDoor(m_player.getLocation()))
     {
         won = true; // מציאת דלת
         return;
     }
-    cout << "hi\n";
+
     if(m_board.explodeBomb()) 
     {
         for (int index = 0; index < m_guard.size(); index++)
@@ -174,4 +182,6 @@ void Controller::endOfTurn(bool& won, bool& hurt, bool& dead) // 0 1 2
             return;
         }
     }
+
+    if(player) m_board.moveObject(m_player.getPrePlace(), m_player.getLocation(), '/');
 }

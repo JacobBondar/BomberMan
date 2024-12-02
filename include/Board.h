@@ -41,6 +41,9 @@ public:
 	bool checkAllCells(Location loc);
 	void removeGuard(int index);
 	void reduceBombsTimer();
+	void moveObject(Location prev, Location to, char type);
+	bool checkIfStone(Location loc);
+	void resetBoard();
 
 private:
 	vector<vector<string>> m_board;
