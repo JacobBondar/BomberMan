@@ -25,15 +25,14 @@ void Board::loadNextLevel()
 	system("cls");
 }
 
-void Board::updateBoardAfterExploded(Location player, vector <Guard> guards)
+void Board::updateBoardAfterHit(Location ogPlayer, Location newPlayer, vector <Guard> guards)
 {
 	updatePlayerGuards(' ', ' ', false);
 
-	m_player = player;
-	
+	m_player = ogPlayer;
 	for (int index = 0; index < guards.size(); index++)
 	{
-		m_guards[index] = guards[index].getLocation();
+		m_guards[index] = guards[index].returnOg();
 	}
 
 	updatePlayerGuards('/', '!', true);
@@ -136,10 +135,10 @@ bool Board::validCell(Location loc)
 	int row, col;
 	getRowCol(loc.row, loc.col, row, col);
 
-	if (m_board[row][0][col] == '#' || m_board[row][0][col] == '@') return false;
-
 	if (row > m_limit.row || col > m_limit.col || row < 0 || col < 0) return false;
 
+	if (m_board[row][0][col] == '#' || m_board[row][0][col] == '@') return false;
+	
 	return true;
 }
 
@@ -169,7 +168,6 @@ void Board::insertIntoBoard(ifstream& file)
 		m_board[index].push_back(rowInGame);
 		index++;
 	}
-	cout << m_board.size() - 1 << endl << m_board[0][0].size() - 2 << endl; // '\n'
 
 	insertIntoLimit(m_board.size() - 1, m_board[0][0].size() - 2);
 }
@@ -250,6 +248,8 @@ bool Board::checkAllCells(Location check)
 
 bool Board::explodeBomb()
 {
+	if (m_bombs.empty()) return false;
+
 	return m_bombs[0].explode();
 }
 
@@ -287,4 +287,9 @@ void Board::resetBoard()
 	m_stones.clear();
 	m_player = { 0, 0 };
 	m_limit = { 0, 0 };
+}
+
+void Board::setPlayerLocation(Location loc)
+{
+	m_player = loc;
 }

@@ -29,6 +29,7 @@ public:
 	void changePosBack();
 	Location getPrePlace();
 	void setPrePlace();
+	Location getOg();
 
 private:
 	Location m_OriginalPlace;

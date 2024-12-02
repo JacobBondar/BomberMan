@@ -114,3 +114,8 @@ void Player::setPrePlace()
 {
 	m_curPlace = m_prePlace;
 }
+
+Location Player::getOg()
+{
+	return m_OriginalPlace;
+}

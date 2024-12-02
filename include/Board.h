@@ -27,7 +27,7 @@ public:
 	bool createBoard(ifstream& file);
 	void loadAfterMove();
 	void loadNextLevel();
-	void updateBoardAfterExploded(Location player, vector<Guard> guards);
+	void updateBoardAfterHit(Location ogPlayer, Location player, vector<Guard> guards);
 	void print(int points, int lifes, int level);
 	Location getPlayerLoc();
 	vector<Location> getGuards();
@@ -44,6 +44,7 @@ public:
 	void moveObject(Location prev, Location to, char type);
 	bool checkIfStone(Location loc);
 	void resetBoard();
+	void setPlayerLocation(Location loc);
 
 private:
 	vector<vector<string>> m_board;

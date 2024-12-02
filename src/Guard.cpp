@@ -1,6 +1,6 @@
 #include "Guard.h"
 
-Guard::Guard(Location loc, Location ogLoc, bool alive) : m_location(loc), m_ogLocation(ogLoc), m_alive(alive) {}
+Guard::Guard(Location loc, bool alive) : m_location(loc), m_ogLocation(loc), m_alive(alive) {}
 
 Location Guard::calcSetNextMove(Location locPlayer) //algoritem... algoritem... goodluck brother... ez kissy face ;-)
 {
@@ -61,4 +61,9 @@ Location Guard::returnOg()
 int Guard::lengthDiffer(int firstValue, int secondValue)
 {
 	return abs(firstValue - secondValue);
+}
+
+void Guard::setLocation(Location loc)
+{
+	m_location = loc;
 }

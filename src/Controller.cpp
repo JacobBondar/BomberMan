@@ -95,18 +95,19 @@ void Controller::playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, in
         {
             if (m_board.validCell(m_player.getLocation()))
             {
+                //m_board.setPlayerLocation(m_player.getLocation());
                 break; // אם נכון אז תשים אותו איפה שרציתי
             }
-            else m_player.setPrePlace();
-            // check why doesnt work limits!!!!!!!!!!!!!!
+            m_player.setPrePlace();
         }
-
-        if (direction == 'b') // פצצה
+        
+        else if (direction == 'b') // פצצה
         {
             m_board.addBomb(m_player.getLocation()); // מוסיפים את הפצצה
             break;
         }
     }
+
     for (int guardCell = 0; !playerTurn && guardCell < m_guard.size(); guardCell++)
     {
         Location prev = m_guard[guardCell].calcSetNextMove(m_player.getLocation());
@@ -126,7 +127,7 @@ void Controller::playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, in
     }
 }
 
-void Controller::endOfTurn(bool& won, bool& hurt, bool& dead, bool player) // 0 1 2
+void Controller::endOfTurn(bool& won, bool& hurt, bool& dead, bool player)
 {
     m_board.reduceBombsTimer();
     //m_board.loadAfterMove(); //שמה את המיקום במקום 0
@@ -136,7 +137,7 @@ void Controller::endOfTurn(bool& won, bool& hurt, bool& dead, bool player) // 0 
         return;
     }
 
-    if(m_board.explodeBomb()) 
+    if(m_board.explodeBomb())
     {
         for (int index = 0; index < m_guard.size(); index++)
         {
@@ -161,7 +162,8 @@ void Controller::endOfTurn(bool& won, bool& hurt, bool& dead, bool player) // 0 
             {
                 m_guard[index].returnOg();
             }
-            m_board.updateBoardAfterExploded(m_player.getLocation(), m_guard);
+            m_board.updateBoardAfterHit(m_player.getOg(), m_player.getLocation(), m_guard);
+            m_player.SetOgPlace();
 
             hurt = true;
             return;
@@ -173,6 +175,13 @@ void Controller::endOfTurn(bool& won, bool& hurt, bool& dead, bool player) // 0 
     {
         if (m_player.getLocation().isEqual(m_guard[index].getLocation()))
         {
+            m_board.updateBoardAfterHit(m_player.getOg(), m_player.getLocation(), m_guard);
+            m_player.SetOgPlace();
+            for (int index = 0; index < m_guard.size(); index++)
+            {
+                m_guard[index].setLocation(m_guard[index].returnOg());
+            }
+
             if (m_player.gotHitDead())
             {
                 dead = true;
