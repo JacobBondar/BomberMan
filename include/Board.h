@@ -59,7 +59,7 @@ private:
 	bool lookForObjects();
 	void insertIntoLimit(size_t row, size_t col);
 	void getRowCol(int row, int col, int& rowReturn, int& colReturn);
-	void updatePlayerGuards(char cplayer, char cguard, bool check);
+	void updatePlayerGuards(char cplayer, char cguard);
 	
 };
 

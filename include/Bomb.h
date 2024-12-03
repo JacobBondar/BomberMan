@@ -7,7 +7,7 @@ class Bomb
 public:
 	Bomb(Location loc);
 	int getTimer() const;
-	void updateTimer();
+	void reduceTimer();
 	bool explode();
 	Location getLocation();
 

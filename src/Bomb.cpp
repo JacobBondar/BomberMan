@@ -10,7 +10,7 @@ int Bomb::getTimer() const
 	return m_timer;
 }
 //-------------------------
-void Bomb::updateTimer()
+void Bomb::reduceTimer()
 {
 	m_timer--;
 }

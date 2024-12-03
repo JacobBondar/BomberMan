@@ -112,8 +112,8 @@ void Controller::playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, in
     for (int guardCell = 0; !playerTurn && guardCell < m_guard.size(); guardCell++)
     {
         Location prev = m_guard[guardCell].calcSetNextMove(m_player.getLocation());
-        if (m_board.checkIfStone(m_guard[guardCell].getLocation())) m_guard[guardCell].setGuard(prev, 1);
-        m_board.moveObject(prev, m_guard[guardCell].getLocation(), '!');
+        if (m_board.checkIfStone(m_guard[guardCell].getLocation())) m_guard[guardCell].setLocation(prev);
+        else m_board.moveObject(prev, m_guard[guardCell].getLocation(), '!');
         endOfTurn(won, hurt, dead, playerTurn);
         if (dead) return;
         m_board.print(m_player.getPoints(), m_player.getLives(), numLevel);
