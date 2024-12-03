@@ -19,13 +19,14 @@ class Player
 public:
 	Player();
 	Player(Location newLocation);
+	void setToNewLevel(Location loc);
 	void addPoints(int newPoints);
 	bool gotHitDead();
 	int getPoints() const;
 	int getLives()const;
 	Location getLocation() const;
 	void SetOgPlace();
-	bool setLocation(int direction); // auto
+	bool setLocation(int direction);
 	void changePosBack();
 	Location getPrePlace();
 	Location getOg();

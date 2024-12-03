@@ -77,7 +77,7 @@ void Board::removeGuard(int index)
 void Board::print(int points, int lifes, int level)
 {
 	loadAfterMove();
-	int row, col;
+	int row, col, index;
 	size_t position = 0;
 
 	for (int cell = 0; cell < m_stones.size(); cell++)
@@ -98,10 +98,16 @@ void Board::print(int points, int lifes, int level)
 	{
 		cout << m_board[row][0];
 
-		position = m_board[row][0].find('*', 0);
-		if (position != std::string::npos) m_board[row][0][(int)position] = ' ';
+		index = 0;
+		position = m_board[row][0].find('*', index);
+		while (position != std::string::npos)
+		{
+			m_board[row][0][(int)position] = ' ';
+			index++;
+			position = m_board[row][0].find('*', index);
+		}
 	}
-	if(!m_bombs.empty() && m_bombs[0].explode()) system("pause");
+
 	cout << "\nPoints: " << points << "\nLifes <3: " << lifes 
 		<< "\nlevel: " << level << endl;
 }
@@ -131,7 +137,7 @@ void Board::removeStonesExploded()
 			getRowCol(m_stones[cell].row,
 				m_stones[cell].col, row, col);
 
-			m_board[row][0][col] = ' '; //check if erase
+			//m_board[row][0][col] = ' '; //check if erase
 			m_stones.erase(m_stones.begin() + cell);
 		}
 	}
@@ -308,11 +314,6 @@ void Board::setPlayerLocation(Location loc)
 
 void Board::removeBomb()
 {
-	int row, col;
-	getRowCol(m_bombs[0].getLocation().row, m_bombs[0].getLocation().col, 
-		row, col);
-	m_board[row][0][col] = ' ';
-
 	m_bombs.erase(m_bombs.begin() + 0);
 	m_bombs.shrink_to_fit();
 }

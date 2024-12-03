@@ -113,3 +113,9 @@ Location Player::getOg()
 {
 	return m_OriginalPlace;
 }
+
+void Player::setToNewLevel(Location loc)
+{
+	m_curPlace = m_OriginalPlace = m_prePlace = loc;
+	m_lives++;
+}

@@ -21,23 +21,23 @@ void Controller::run()
 
     while (file >> nameLevel)
     {
-        cout << nameLevel << endl;
         numLevel++;
         fileLevel.open(nameLevel);
         if (!fileLevel)
         {
-            std::cerr << "Can't open the game file, moving to the next one...\n"; // add timer pls ty
+            std::cerr << "Can't open the game file, moving to the next one...\n";
+            std::this_thread::sleep_for(2000ms);
             continue;
         }
 
         if (!m_board.createBoard(fileLevel))
         {
-            std::cout << "Invalid level name, loading the next level...\n"; // add timer pls ty
+            std::cout << "Invalid level, loading the next level...\n";
+            std::this_thread::sleep_for(2000ms);
             continue;
         }
 
         m_board.loadNextLevel();
-
         if (levelControl(numLevel)) // returns won or lost
         {
             //טעינת שלב הבא
@@ -53,8 +53,7 @@ void Controller::run()
 
 bool Controller::levelControl(int numLevel)
 {
-    Player player(m_board.getPlayerLoc());//קבלת מיקום של השחקן
-    m_player = player;
+    m_player.setToNewLevel(m_board.getPlayerLoc());
     int guardCounter = 0;
 
     //מקבלת את מיקום השחקנים בהתחלה
@@ -116,8 +115,8 @@ void Controller::playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, in
         else m_board.moveObject(prev, m_guard[guardCell].getLocation(), '!');
         endOfTurn(won, hurt, dead, playerTurn);
         if (dead) return;
+        std::this_thread::sleep_for(500ms);
         m_board.print(m_player.getPoints(), m_player.getLives(), numLevel);
-        std::this_thread::sleep_for(200ms);
     }
 
     if (playerTurn)
@@ -177,7 +176,7 @@ void Controller::endOfTurn(bool& won, bool& hurt, bool& dead, bool player)
         m_board.addExplodedBomb();
         m_board.removeBomb();
     }
-
+    
     for (int index = 0; index < m_guard.size(); index++)
     {
         if (m_player.getLocation().isEqual(m_guard[index].getLocation()))
