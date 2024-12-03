@@ -40,14 +40,39 @@ void Controller::run()
         m_board.loadNextLevel();
         if (levelControl(numLevel)) // returns won or lost
         {
-            //טעינת שלב הבא
-            
-
+            m_board.loadNextLevel();
+            cout << "Well Done!!!!\n";
+            std::this_thread::sleep_for(1000ms);
         }
+        else
+        {
+            m_board.loadNextLevel();
+            cout << "You lost, womp womp\n" << "You have: " <<
+                m_player.getPoints() << " points.\n"
+                "Do you want to spend 10 points per 1 life?\n" <<
+                "Press the amount of lifes you want to get\n" <<
+                "0 - for no lifes\n1 - for 1 life\n and so on...\n";
+            int choice;
+            cin >> choice;
+
+            while (m_player.getPoints() < (10 * choice))
+            {
+                cout << "You dont have enough points!, " << 
+                    "choose another value\n";
+                cin >> choice;
+            }
+            if (choice == 0) break;
+            m_player.boughtLife(choice);
+
+            std::this_thread::sleep_for(1000ms);
+        }
+
         m_board.resetBoard();
         m_guard.clear();
         fileLevel.close();
     }
+    m_board.loadNextLevel();
+    cout << "Thanks for playing, have a wonderful day <3\n";
     file.close();
 }
 
@@ -112,7 +137,11 @@ void Controller::playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, in
     {
         Location prev = m_guard[guardCell].calcSetNextMove(m_player.getLocation());
         if (m_board.checkIfStone(m_guard[guardCell].getLocation())) m_guard[guardCell].setLocation(prev);
-        else m_board.moveObject(prev, m_guard[guardCell].getLocation(), '!');
+        else
+        {
+            m_board.moveObject(prev, m_guard[guardCell].getLocation(), '!');
+            m_board.setLocGuard(guardCell, m_guard[guardCell].getLocation());
+        }
         endOfTurn(won, hurt, dead, playerTurn);
         if (dead) return;
         std::this_thread::sleep_for(500ms);
@@ -149,7 +178,9 @@ void Controller::endOfTurn(bool& won, bool& hurt, bool& dead, bool player)
                 dead = true;
                 return;
             }
-            m_board.updateBoardAfterHit(m_player.getLocation(), m_player.getOg(), m_guard);
+
+            m_board.updateBoardAfterHit(m_player.getLocation(), 
+                m_player.getOg(), m_guard);
             m_player.SetOgPlace();
             for (int index = 0; index < m_guard.size(); index++)
             {

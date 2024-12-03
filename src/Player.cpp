@@ -119,3 +119,9 @@ void Player::setToNewLevel(Location loc)
 	m_curPlace = m_OriginalPlace = m_prePlace = loc;
 	m_lives++;
 }
+
+void Player::boughtLife(int amount)
+{
+	m_points -= (amount * 10);
+	m_lives += amount;
+}

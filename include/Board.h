@@ -47,6 +47,7 @@ public:
 	void resetBoard();
 	void setPlayerLocation(Location loc);
 	void addExplodedBomb();
+	void setLocGuard(int index, Location loc);
 
 private:
 	vector<vector<string>> m_board;

@@ -59,7 +59,7 @@ void Board::updatePlayerGuards(char cplayer, char cguard)
 		getRowCol(m_bombs[index].getLocation().row,
 			m_bombs[index].getLocation().col, row, col);
 
-		m_board[row][0][col] = cguard;
+		m_board[row][0][col] = cplayer;
 	}
 	m_bombs.clear();
 }
@@ -137,7 +137,7 @@ void Board::removeStonesExploded()
 			getRowCol(m_stones[cell].row,
 				m_stones[cell].col, row, col);
 
-			//m_board[row][0][col] = ' '; //check if erase
+			m_board[row][0][col] = ' '; //check if erase
 			m_stones.erase(m_stones.begin() + cell);
 		}
 	}
@@ -330,6 +330,11 @@ void Board::addExplodedBomb()
 	{
 		getRowCol(sides[index].row, sides[index].col, row, col);
 
-		m_board[row][0][col] = '*';
+		if (validCell(sides[index])) m_board[row][0][col] = '*';
 	}
+}
+
+void Board::setLocGuard(int index, Location loc)
+{
+	m_guards[index] = loc;
 }

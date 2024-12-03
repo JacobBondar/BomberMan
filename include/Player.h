@@ -30,12 +30,13 @@ public:
 	void changePosBack();
 	Location getPrePlace();
 	Location getOg();
+	void boughtLife(int amount);
 
 private:
 	Location m_OriginalPlace;
 	Location m_curPlace;
 	Location m_prePlace;
-	int m_lives = 3;
+	int m_lives = 2;
 	int m_points = 0;
 
 	bool findingIfDirectionVaild(int direction);
