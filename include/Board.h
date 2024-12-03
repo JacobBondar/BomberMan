@@ -46,6 +46,7 @@ public:
 	bool checkIfStone(Location loc);
 	void resetBoard();
 	void setPlayerLocation(Location loc);
+	void addExplodedBomb();
 
 private:
 	vector<vector<string>> m_board;

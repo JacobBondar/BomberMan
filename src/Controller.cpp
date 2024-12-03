@@ -173,6 +173,8 @@ void Controller::endOfTurn(bool& won, bool& hurt, bool& dead, bool player)
         m_guard.shrink_to_fit();
 
         m_board.removeStonesExploded();
+
+        m_board.addExplodedBomb();
         m_board.removeBomb();
     }
 

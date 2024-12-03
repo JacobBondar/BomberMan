@@ -38,7 +38,6 @@ void Board::updateBoardAfterHit(Location newPlayer, Location ogPlayer, vector <G
 	}
 
 	updatePlayerGuards('/', '!');
-	m_bombs.clear();
 }
 
 void Board::updatePlayerGuards(char cplayer, char cguard)
@@ -54,6 +53,15 @@ void Board::updatePlayerGuards(char cplayer, char cguard)
 
 		m_board[row][0][col] = cguard;
 	}
+
+	for (int index = 0; index < m_bombs.size(); index++)
+	{
+		getRowCol(m_bombs[index].getLocation().row,
+			m_bombs[index].getLocation().col, row, col);
+
+		m_board[row][0][col] = cguard;
+	}
+	m_bombs.clear();
 }
 
 void Board::removeGuard(int index)
@@ -70,7 +78,8 @@ void Board::print(int points, int lifes, int level)
 {
 	loadAfterMove();
 	int row, col;
-	
+	size_t position = 0;
+
 	for (int cell = 0; cell < m_stones.size(); cell++)
 	{
 		getRowCol(m_stones[cell].row, m_stones[cell].col,
@@ -87,15 +96,12 @@ void Board::print(int points, int lifes, int level)
 	
 	for (row = 0; row < m_limit.row + 1; row++)
 	{
-		for (col = 0; col < m_limit.col + 1; col++)
-		{
-			// problem with row!!!!
-			cout << m_board[row][0][col];
-			//cout << "row = " << row << "col = " << col;
-		}
-		cout << endl;
+		cout << m_board[row][0];
+
+		position = m_board[row][0].find('*', 0);
+		if (position != std::string::npos) m_board[row][0][(int)position] = ' ';
 	}
-	if (!m_bombs.empty() && m_bombs[0].getTimer() == 0) system("pause");
+	if(!m_bombs.empty() && m_bombs[0].explode()) system("pause");
 	cout << "\nPoints: " << points << "\nLifes <3: " << lifes 
 		<< "\nlevel: " << level << endl;
 }
@@ -302,6 +308,27 @@ void Board::setPlayerLocation(Location loc)
 
 void Board::removeBomb()
 {
-	m_board.erase(m_board.begin() + 0);
-	m_board.shrink_to_fit();
+	int row, col;
+	getRowCol(m_bombs[0].getLocation().row, m_bombs[0].getLocation().col, 
+		row, col);
+	m_board[row][0][col] = ' ';
+
+	m_bombs.erase(m_bombs.begin() + 0);
+	m_bombs.shrink_to_fit();
+}
+
+void Board::addExplodedBomb()
+{
+	int row, col;
+	Location loc = m_bombs[0].getLocation();
+
+	Location sides[5] = { loc, loc.returnRow(1), loc.returnRow(-1),
+							loc.returnCol(1), loc.returnCol(-1) };
+
+	for (int index = 0; index < 5; index++)
+	{
+		getRowCol(sides[index].row, sides[index].col, row, col);
+
+		m_board[row][0][col] = '*';
+	}
 }

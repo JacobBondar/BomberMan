@@ -16,14 +16,16 @@ struct Location
         return (*this).row == other.row && (*this).col == other.col; 
     }
 
-    int returnRow(int sign)
+    Location returnRow(int sign)
     {
-        return sign + (*this).row;
+        Location temp((*this).row + sign, (*this).col);
+        return temp;
     }
 
-    int returnCol(int sign)
+    Location returnCol(int sign)
     {
-        return sign + (*this).col;
+        Location temp((*this).row, (*this).col + sign);
+        return temp;
     }
 
     bool isNearBy(Location loc)
