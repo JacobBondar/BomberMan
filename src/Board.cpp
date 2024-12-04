@@ -380,5 +380,5 @@ void Board::setLocPlayer(Location loc)
 
 void Board::printFinalScore(int score, int lifes)
 {
-	cout << "You Finished with: " << score << " and " << lifes << " lifes\n";
+	cout << "You Finished with: " << score << " points, and " << lifes << " lifes!\n";
 }

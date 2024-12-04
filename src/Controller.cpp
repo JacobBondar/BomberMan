@@ -47,7 +47,8 @@ void Controller::run()
         else
         {
             m_board.loadNextLevel();
-            cout << "You lost, womp womp\n" << "You have: " <<
+            cout << "You lost, nice try... better luck next time <3\n" <<
+                "You have: " <<
                 m_player.getPoints() << " points.\n"
                 "Do you want to spend 10 points per 1 life?\n" <<
                 "Press the amount of lifes you want to get\n" <<
