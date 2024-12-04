@@ -175,7 +175,7 @@ void Board::insertIntoBoard(ifstream& file)
 	auto rowInGame = std::string();
 	int index = 0;
 
-	while (getline(file, rowInGame)) // add the board
+	while (getline(file, rowInGame))
 	{
 		rowInGame += "\n";
 
@@ -337,4 +337,21 @@ void Board::addExplodedBomb()
 void Board::setLocGuard(int index, Location loc)
 {
 	m_guards[index] = loc;
+}
+
+void Board::printFile(string name)
+{
+	ifstream file(name);
+	if (!file)
+	{
+		std::cerr << "Can't open the file...\n";
+		exit(EXIT_FAILURE);
+	}
+
+	std::string sentence;
+
+	while (getline(file, sentence))
+	{
+		cout << sentence << endl;
+	}
 }

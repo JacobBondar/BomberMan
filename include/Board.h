@@ -48,6 +48,7 @@ public:
 	void setPlayerLocation(Location loc);
 	void addExplodedBomb();
 	void setLocGuard(int index, Location loc);
+	void printFile(string name);
 
 private:
 	vector<vector<string>> m_board;

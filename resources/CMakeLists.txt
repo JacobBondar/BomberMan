@@ -1,4 +1,5 @@
-﻿configure_file ("Playlist.txt" ${CMAKE_BINARY_DIR} COPYONLY)
+﻿configure_file ("GameOver.txt" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("Playlist.txt" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("game1.txt" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("game2.txt" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("game3.txt" ${CMAKE_BINARY_DIR} COPYONLY)

@@ -38,7 +38,7 @@ void Controller::run()
         }
 
         m_board.loadNextLevel();
-        if (levelControl(numLevel)) // returns won or lost
+        if (levelControl(numLevel))
         {
             m_board.loadNextLevel();
             cout << "Well Done!!!!\n";
@@ -72,7 +72,7 @@ void Controller::run()
         fileLevel.close();
     }
     m_board.loadNextLevel();
-    cout << "Thanks for playing, have a wonderful day <3\n";
+    m_board.printFile("GameOver.txt");
     file.close();
 }
 
