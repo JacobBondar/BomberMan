@@ -31,9 +31,7 @@ public:
 	void print(int points, int lifes, int level);
 	Location getPlayerLoc();
 	vector<Location> getGuards();
-	vector<Bomb> getBombs();
 	void removeStonesExploded();
-	//bool isGuardHit(Location Loc);
 	bool explodeBomb();
 	bool validCell(Location loc);
 	void addBomb(Location loc);
@@ -49,6 +47,8 @@ public:
 	void addExplodedBomb();
 	void setLocGuard(int index, Location loc);
 	void printFile(string name);
+	void setLocPlayer(Location loc);
+	void printFinalScore(int score, int lifes);
 
 private:
 	vector<vector<string>> m_board;

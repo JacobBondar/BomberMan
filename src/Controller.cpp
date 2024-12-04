@@ -21,7 +21,6 @@ void Controller::run()
 
     while (file >> nameLevel)
     {
-        numLevel++;
         fileLevel.open(nameLevel);
         if (!fileLevel)
         {
@@ -37,6 +36,7 @@ void Controller::run()
             continue;
         }
 
+        numLevel++;
         m_board.loadNextLevel();
         if (levelControl(numLevel))
         {
@@ -73,6 +73,7 @@ void Controller::run()
     }
     m_board.loadNextLevel();
     m_board.printFile("GameOver.txt");
+    m_board.printFinalScore(m_player.getPoints(), m_player.getLives());
     file.close();
 }
 
@@ -146,10 +147,12 @@ void Controller::playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, in
         if (dead) return;
         std::this_thread::sleep_for(500ms);
         m_board.print(m_player.getPoints(), m_player.getLives(), numLevel);
+        if (hurt) break;
     }
 
     if (playerTurn)
     {
+        m_board.setLocPlayer(m_player.getLocation());
         endOfTurn(won, hurt, dead, playerTurn);
         if (dead) return;
         m_board.print(m_player.getPoints(), m_player.getLives(), numLevel);
@@ -158,10 +161,9 @@ void Controller::playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, in
 
 void Controller::endOfTurn(bool& won, bool& hurt, bool& dead, bool player)
 {
-    m_board.reduceBombsTimer();
-
     if (player)
     {
+        m_board.reduceBombsTimer();
         if (m_board.moveObject(m_player.getPrePlace(), m_player.getLocation(), '/'))
         {
             won = true; // מציאת דלת
@@ -195,12 +197,12 @@ void Controller::endOfTurn(bool& won, bool& hurt, bool& dead, bool player)
         {
             if (m_board.checkAllCells(m_guard[index].getLocation()))
             {
-                m_guard.erase(m_guard.begin() + index);
                 m_board.removeGuard(index);
+                m_guard.erase(m_guard.begin() + index);
                 m_player.addPoints(5);
+                index--;
             }
         }
-        m_guard.shrink_to_fit();
 
         m_board.removeStonesExploded();
 

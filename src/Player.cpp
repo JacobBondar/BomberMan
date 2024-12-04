@@ -123,5 +123,5 @@ void Player::setToNewLevel(Location loc)
 void Player::boughtLife(int amount)
 {
 	m_points -= (amount * 10);
-	m_lives += amount;
+	m_lives += amount - 1;
 }

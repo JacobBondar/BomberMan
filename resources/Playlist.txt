@@ -3,3 +3,4 @@ game2.txt
 game3.txt
 game4.txt
 game5.txt
+game6.txt
