@@ -24,7 +24,6 @@ void Controller::run()
         fileLevel.open(nameLevel);
         if (!fileLevel)
         {
-            cout << nameLevel << endl;
             std::cerr << "Can't open the game file, moving to the next one...\n";
             std::this_thread::sleep_for(2000ms);
             continue;
@@ -158,6 +157,7 @@ void Controller::playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, in
             m_board.moveObject(prev, m_guard[guardCell].getLocation(), '!');
             m_board.setLocGuard(guardCell, m_guard[guardCell].getLocation());
         }
+
         endOfTurn(won, hurt, dead, playerTurn);
         if (dead) return;
         std::this_thread::sleep_for(100ms);
