@@ -177,7 +177,6 @@ void Board::insertIntoBoard(ifstream& file)
 
 //-----------------------------------------------------------------------------
 
-//check again
 bool Board::lookForObjects()
 {
 	bool player = false, guard = false, door = false;

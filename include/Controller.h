@@ -23,7 +23,8 @@ private:
 
 	void endOfTurn(bool& won, bool& hurt, bool& dead, bool player);
 	bool levelControl(int numLevel);
-	void playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, int numLevel);
+	void playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won,
+		int numLevel);
 	void checkIfFileOpened(ifstream& file);
 	bool checkIfGameOpened(ifstream& file);
 	bool checkIfBoardValid(ifstream& file);
@@ -31,6 +32,9 @@ private:
 	bool lostGame();
 	void endGame(ifstream& file);
 	int insertNewGuards();
-
-
+	bool playerPlaysTurn(int numLevel);
+	bool guardPlaysTurn(int numLevel, bool& won, bool& hurt, bool& dead,
+		bool playerTurn, int guardCell);
+	bool controlTheExplosion(bool& dead, bool& hurt);
+	void checkIfPlayerHitGuard(bool& dead, bool& hurt);
 };
