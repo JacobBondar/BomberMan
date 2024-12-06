@@ -5,11 +5,11 @@
 class Bomb
 {
 public:
-	Bomb(Location loc);
+	Bomb(const Location &loc);
 	int getTimer() const;
 	void reduceTimer();
-	bool explode();
-	Location getLocation();
+	bool explode() const;
+	Location getLocation() const;
 
 private:
 	int m_timer;

@@ -1,10 +1,10 @@
 ﻿#include "Controller.h"
 
-
 using std::ifstream;
+using std::cerr;
+using std::cout;
 
 Controller::Controller() {}
-
 
 void Controller::run()
 {
@@ -13,89 +13,40 @@ void Controller::run()
     int numLevel = 0;
 
     file.open("Playlist.txt");
-    if (!file)
-    {
-        std::cerr << "Can't open the main file\n";
-        exit(EXIT_FAILURE);
-    }
+
+    checkIfFileOpened(file);
 
     while (file >> nameLevel)
     {
         fileLevel.open(nameLevel);
-        if (!fileLevel)
-        {
-            std::cerr << "Can't open the game file, moving to the next one...\n";
-            std::this_thread::sleep_for(2000ms);
-            continue;
-        }
 
-        if (!m_board.createBoard(fileLevel))
-        {
-            std::cout << "Invalid level, loading the next level...\n";
-            std::this_thread::sleep_for(2000ms);
-            m_board.resetBoard();
-            fileLevel.close();
-            continue;
-        }
+        if (!checkIfGameOpened(fileLevel)) continue;
+        if (!checkIfBoardValid(fileLevel)) continue;
 
         numLevel++;
         m_board.eraseBoard();
-        if (levelControl(numLevel))
-        {
-            m_board.eraseBoard();
-            m_board.printFile("WellDone.txt");
-            std::this_thread::sleep_for(1000ms);
-        }
+
+        if (levelControl(numLevel)) wonGame();
         else
         {
-            m_board.eraseBoard();
-            cout << "You lost, nice try... better luck next time <3\n" <<
-                "You have: " <<
-                m_player.getPoints() << " points.\n"
-                "Do you want to spend 10 points per 1 life?\n" <<
-                "Press the amount of lifes you want to get\n" <<
-                "0 - for no lifes\n1 - for 1 life\n and so on...\n";
-            int choice;
-            cin >> choice;
-
-            while (m_player.getPoints() < (10 * choice))
-            {
-                cout << "You dont have enough points!, " << 
-                    "choose another value\n";
-                cin >> choice;
-            }
-            if (choice == 0) break;
-            m_player.boughtLife(choice);
-
-            std::this_thread::sleep_for(1000ms);
+            if (lostGame()) break;
         }
 
         m_board.resetBoard();
         m_guard.clear();
         fileLevel.close();
     }
-    m_board.eraseBoard();
-    m_board.printFile("GameOver.txt");
-    m_board.printFinalScore(m_player.getPoints(), m_player.getLives());
-    file.close();
+    endGame(file);
 }
 
 bool Controller::levelControl(int numLevel)
 {
     m_player.setToNewLevel(m_board.getPlayerLoc());
-    int guardCounter = 0;
+    int guardCounter = insertNewGuards();
 
-    //מקבלת את מיקום השחקנים בהתחלה
-    for (int index = 0; index < m_board.getGuards().size(); index++)
-    {
-        if (index >= m_guard.size()) m_guard.resize(index + 1);
-        m_guard[index].setGuard(m_board.getGuards()[index], true);
-        guardCounter++;
-    }
     m_board.print(m_player.getPoints(), m_player.getLives(), numLevel);
 
     bool hurt = false, dead = false, won = false;
-    //כל עוד השחקן שלי עם חיים ממשיכים 
     while (m_player.getLives() > 0)
     {
         hurt = false;
@@ -116,7 +67,7 @@ bool Controller::levelControl(int numLevel)
 
 void Controller::playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, int numLevel)
 {
-    while (playerTurn) //מתגלגלים בלולאה כל עוד השחקן מפגר ושם לי תווים לא נכונים (חיצים או פצצה)
+    while (playerTurn)
     {
         int direction = _getch();
         
@@ -245,4 +196,93 @@ void Controller::endOfTurn(bool& won, bool& hurt, bool& dead, bool player)
             return;
         }
     }
+}
+
+
+
+
+
+void Controller::checkIfFileOpened(ifstream &file)
+{
+    if (!file)
+    {
+        cerr << "Can't open the file\n";
+        exit(EXIT_FAILURE);
+    }
+}
+
+bool Controller::checkIfGameOpened(ifstream& file)
+{
+    if (!file)
+    {
+        cerr << "Can't open the game file, moving to the next one...\n";
+        std::this_thread::sleep_for(2000ms);
+        return false;
+    }
+    return true;
+}
+
+bool Controller::checkIfBoardValid(ifstream& file)
+{
+    if (!m_board.createBoard(file))
+    {
+        cout << "Invalid level, loading the next level...\n";
+        std::this_thread::sleep_for(2000ms);
+        m_board.resetBoard();
+        file.close();
+        return false;
+    }
+    return true;
+}
+
+void Controller::wonGame()
+{
+    m_board.eraseBoard();
+    m_board.printFile("WellDone.txt");
+    std::this_thread::sleep_for(1000ms);
+}
+
+bool Controller::lostGame()
+{
+    m_board.eraseBoard();
+    cout << "You lost, nice try... better luck next time <3\n" <<
+        "You have: " <<
+        m_player.getPoints() << " points.\n"
+        "Do you want to spend 10 points per 1 life?\n" <<
+        "Press the amount of lifes you want to get\n" <<
+        "0 - for no lifes\n1 - for 1 life\n and so on...\n";
+    int choice;
+    cin >> choice;
+
+    while (m_player.getPoints() < (10 * choice))
+    {
+        cout << "You dont have enough points!, " <<
+            "choose another value\n";
+        cin >> choice;
+    }
+    if (choice == 0) return true;
+    m_player.boughtLife(choice);
+
+    std::this_thread::sleep_for(1000ms);
+    return false;
+}
+
+void Controller::endGame(ifstream &file)
+{
+    m_board.eraseBoard();
+    m_board.printFile("GameOver.txt");
+    m_board.printFinalScore(m_player.getPoints(), m_player.getLives());
+    file.close();
+}
+
+int Controller::insertNewGuards()
+{
+    int guardCounter = 0;
+    for (int index = 0; index < m_board.getGuards().size(); index++)
+    {
+        if (index >= m_guard.size()) m_guard.resize(index + 1);
+        m_guard[index].setGuard(m_board.getGuards()[index], true);
+        guardCounter++;
+    }
+    return guardCounter;
 }

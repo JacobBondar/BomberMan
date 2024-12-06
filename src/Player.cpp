@@ -1,13 +1,18 @@
 #include <Player.h>
 
+//-----------------------------------------------------------------------------
 
-using std::cout;
-using std::endl;
+Player::Player() : 
+	m_OriginalPlace({0 , 0}), m_curPlace({ 0 , 0 }), m_prePlace({ 0 , 0 }) {}
 
-Player::Player() : m_OriginalPlace({0 , 0}), m_curPlace({ 0 , 0 }), m_prePlace({ 0 , 0 }) {}
+//-----------------------------------------------------------------------------
 
-Player::Player(Location newLocation) : m_OriginalPlace(newLocation), m_curPlace(newLocation), m_prePlace (newLocation){}
-//----------------------------------------
+Player::Player(const Location& newLocation) :
+	m_OriginalPlace(newLocation), m_curPlace(newLocation), 
+	m_prePlace (newLocation){}
+
+//-----------------------------------------------------------------------------
+
 bool Player::setLocation(int direction)
 {
 	m_prePlace = m_curPlace;
@@ -19,41 +24,49 @@ bool Player::setLocation(int direction)
 
 		return true;
 	}
-	else
-	{
-		//cout << "please type one of the arrows to change the location of the player or b for bomb" << endl;
-		return false;
-	}
+	else return false;
 }
-//----------------------------------------
+
+//-----------------------------------------------------------------------------
+
 void Player::addPoints(int newPoints)
 {
 	m_points += newPoints;
 }
-//--------------------------------------
+
+//-----------------------------------------------------------------------------
+
 bool Player::gotHitDead()
 {
 	m_lives--;
 	if (m_lives == 0) return true;
 	return false;
 }
-//--------------------------------------
+
+//-----------------------------------------------------------------------------
+
 int Player::getPoints() const
 {
 return m_points;
 }
-//--------------------------------------
+
+//-----------------------------------------------------------------------------
+
 Location Player::getLocation() const
 {
 return m_curPlace;
 }
-//-----------------------------------
+
+//-----------------------------------------------------------------------------
+
 void Player::SetOgPlace()
 {
 	m_curPlace = m_OriginalPlace;
 }
-//---------------------------------
-bool Player::findingIfDirectionVaild(int direction)
+
+//-----------------------------------------------------------------------------
+
+bool Player::findingIfDirectionVaild(int direction) const
 {
 
 	if (direction == 0 || direction == SPECIAL_KEY)
@@ -62,7 +75,9 @@ bool Player::findingIfDirectionVaild(int direction)
 	}
 	return false;
 }
-//-----------------------------------
+
+//-----------------------------------------------------------------------------
+
 void Player::updatingLocation(int direction)
 {
 	switch (direction)
@@ -93,32 +108,44 @@ void Player::updatingLocation(int direction)
 		}
 }
 }
-//---------------------------------
-int Player::getLives()const
+
+//-----------------------------------------------------------------------------
+
+int Player::getLives() const
 {
 	return m_lives;
 }
-//------------------------------
+
+//-----------------------------------------------------------------------------
+
 void Player::changePosBack()
 {
 	m_curPlace = m_prePlace;
 }
 
-Location Player::getPrePlace()
+//-----------------------------------------------------------------------------
+
+Location Player::getPrePlace() const
 {
 	return m_prePlace;
 }
 
-Location Player::getOg()
+//-----------------------------------------------------------------------------
+
+Location Player::getOg() const
 {
 	return m_OriginalPlace;
 }
 
-void Player::setToNewLevel(Location loc)
+//-----------------------------------------------------------------------------
+
+void Player::setToNewLevel(const Location& loc)
 {
 	m_curPlace = m_OriginalPlace = m_prePlace = loc;
 	m_lives++;
 }
+
+//-----------------------------------------------------------------------------
 
 void Player::boughtLife(int amount)
 {

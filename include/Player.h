@@ -18,8 +18,8 @@ class Player
 {
 public:
 	Player();
-	Player(Location newLocation);
-	void setToNewLevel(Location loc);
+	Player(const Location &newLocation);
+	void setToNewLevel(const Location& loc);
 	void addPoints(int newPoints);
 	bool gotHitDead();
 	int getPoints() const;
@@ -28,8 +28,8 @@ public:
 	void SetOgPlace();
 	bool setLocation(int direction);
 	void changePosBack();
-	Location getPrePlace();
-	Location getOg();
+	Location getPrePlace() const;
+	Location getOg() const;
 	void boughtLife(int amount);
 
 private:
@@ -39,6 +39,6 @@ private:
 	int m_lives = 2;
 	int m_points = 0;
 
-	bool findingIfDirectionVaild(int direction);
+	bool findingIfDirectionVaild(int direction) const;
 	void updatingLocation(int direction);
 };

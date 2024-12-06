@@ -1,8 +1,13 @@
 #include "Guard.h"
 
-Guard::Guard(Location loc, bool alive) : m_location(loc), m_ogLocation(loc), m_alive(alive) {}
+//-----------------------------------------------------------------------------
 
-Location Guard::calcSetNextMove(Location locPlayer)
+Guard::Guard(Location loc, bool alive) 
+	: m_location(loc), m_ogLocation(loc), m_alive(alive) {}
+
+//-----------------------------------------------------------------------------
+
+Location Guard::calcSetNextMove(const Location& locPlayer)
 {
 	Location prev = m_location;
 
@@ -31,39 +36,53 @@ Location Guard::calcSetNextMove(Location locPlayer)
 	return prev;
 }
 
+//-----------------------------------------------------------------------------
+
 Location Guard::getLocation() const
 {
 	return m_location;
 }
 
-void Guard::setGuard(Location loc, bool alive)
+//-----------------------------------------------------------------------------
+
+void Guard::setGuard(const Location& loc, bool alive)
 {
 	m_ogLocation = loc;
 	m_location = loc;
 	m_alive = alive;
 }
 
+//-----------------------------------------------------------------------------
+
 bool Guard::isAlive() const
 {
 	return m_alive;
 }
+
+//-----------------------------------------------------------------------------
 
 void Guard::killGuard()
 {
 	m_alive = false;
 }
 
-Location Guard::returnOg()
+//-----------------------------------------------------------------------------
+
+Location Guard::returnOg() const
 {
 	return m_ogLocation;
 }
 
-int Guard::lengthDiffer(int firstValue, int secondValue)
+//-----------------------------------------------------------------------------
+
+int Guard::lengthDiffer(int firstValue, int secondValue)  const
 {
 	return abs(firstValue - secondValue);
 }
 
-void Guard::setLocation(Location loc)
+//-----------------------------------------------------------------------------
+
+void Guard::setLocation(const Location& loc)
 {
 	m_location = loc;
 }
