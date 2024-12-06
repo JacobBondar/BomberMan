@@ -16,12 +16,12 @@ bool Board::createBoard(ifstream& file)
 	return true;
 }
 
-void Board::loadAfterMove()
+void Board::resetStartLoction()
 {
 	Screen::resetLocation();
 }
 
-void Board::loadNextLevel()
+void Board::eraseBoard()
 {
 	system("cls");
 }
@@ -75,7 +75,7 @@ void Board::removeGuard(int index)
 
 void Board::print(int points, int lifes, int level)
 {
-	loadAfterMove();
+	resetStartLoction();
 
 	int row, col, index;
 	size_t position = 0;

@@ -2,7 +2,7 @@
 
 Guard::Guard(Location loc, bool alive) : m_location(loc), m_ogLocation(loc), m_alive(alive) {}
 
-Location Guard::calcSetNextMove(Location locPlayer) //algoritem... algoritem... goodluck brother... ez kissy face ;-)
+Location Guard::calcSetNextMove(Location locPlayer)
 {
 	Location prev = m_location;
 

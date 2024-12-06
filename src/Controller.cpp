@@ -24,6 +24,7 @@ void Controller::run()
         fileLevel.open(nameLevel);
         if (!fileLevel)
         {
+            cout << nameLevel << endl;
             std::cerr << "Can't open the game file, moving to the next one...\n";
             std::this_thread::sleep_for(2000ms);
             continue;
@@ -33,20 +34,22 @@ void Controller::run()
         {
             std::cout << "Invalid level, loading the next level...\n";
             std::this_thread::sleep_for(2000ms);
+            m_board.resetBoard();
+            fileLevel.close();
             continue;
         }
 
         numLevel++;
-        m_board.loadNextLevel();
+        m_board.eraseBoard();
         if (levelControl(numLevel))
         {
-            m_board.loadNextLevel();
-            cout << "Well Done!!!!\n";
+            m_board.eraseBoard();
+            m_board.printFile("WellDone.txt");
             std::this_thread::sleep_for(1000ms);
         }
         else
         {
-            m_board.loadNextLevel();
+            m_board.eraseBoard();
             cout << "You lost, nice try... better luck next time <3\n" <<
                 "You have: " <<
                 m_player.getPoints() << " points.\n"
@@ -72,7 +75,7 @@ void Controller::run()
         m_guard.clear();
         fileLevel.close();
     }
-    m_board.loadNextLevel();
+    m_board.eraseBoard();
     m_board.printFile("GameOver.txt");
     m_board.printFinalScore(m_player.getPoints(), m_player.getLives());
     file.close();
@@ -127,18 +130,29 @@ void Controller::playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, in
             }
             m_player.changePosBack();
         }
-        
+
         else if (direction == 'b') // פצצה
         {
             m_board.addBomb(m_player.getLocation()); // מוסיפים את הפצצה
             break;
         }
+
+        else if (direction == ' ') break;
+
+        cout << "Please press only the following characters: One of the " <<
+            "arrows, b or spacebar. \nMake sure you are not trying to go into"
+            << " a wall or stone!\n";
+        system("pause");
+        m_board.eraseBoard();
+        m_board.print(m_player.getPoints(), m_player.getLives(), numLevel);
     }
 
     for (int guardCell = 0; !playerTurn && guardCell < m_guard.size(); guardCell++)
     {
         Location prev = m_guard[guardCell].calcSetNextMove(m_player.getLocation());
-        if (m_board.checkIfStone(m_guard[guardCell].getLocation())) m_guard[guardCell].setLocation(prev);
+        if (!m_board.validCell(m_guard[guardCell].getLocation()) ||
+            m_board.checkIfStone(m_guard[guardCell].getLocation()))
+            m_guard[guardCell].setLocation(prev);
         else
         {
             m_board.moveObject(prev, m_guard[guardCell].getLocation(), '!');
@@ -146,7 +160,7 @@ void Controller::playTurn(bool playerTurn, bool& hurt, bool& dead, bool& won, in
         }
         endOfTurn(won, hurt, dead, playerTurn);
         if (dead) return;
-        std::this_thread::sleep_for(500ms);
+        std::this_thread::sleep_for(100ms);
         m_board.print(m_player.getPoints(), m_player.getLives(), numLevel);
         if (hurt) break;
     }

@@ -25,8 +25,8 @@ class Board
 public:
 	Board();
 	bool createBoard(ifstream& file);
-	void loadAfterMove();
-	void loadNextLevel();
+	void resetStartLoction();
+	void eraseBoard();
 	void updateBoardAfterHit(Location newPlayer, Location ogPlayer, vector<Guard> guards);
 	void print(int points, int lifes, int level);
 	Location getPlayerLoc();
